@@ -1,12 +1,19 @@
 <?php
-session_start();
+// Adicione este bloco no início do arquivo para garantir que a sessão está iniciada e o usuário está autenticado
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (empty($_SESSION['cliente_id'])) {
+    header('Location: ../../Login.php');
+    exit();
+}
+
 require_once __DIR__ . '/../../models/Cliente.class.php';
 require_once __DIR__ . '/../../models/Servico.class.php';
 
 // Obter dados dinâmicos
 $cliente = new Cliente();
 $servico = new Servico();
-
 $cliente_id = $_SESSION['cliente_id'];
 $cliente_nome = $_SESSION['cliente_nome'] ?? 'Cliente';
 

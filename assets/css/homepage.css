@@ -1,4 +1,3 @@
-
 :root {
     --primary-color: #005DFF;
     --secondary-color: #00CFFF;
@@ -13,8 +12,8 @@
 }
 
 body {
-    background: var(--light-color);
-    font-family: 'Poppins', Arial, sans-serif;
+    font-family: 'Montserrat', 'Poppins', Arial, sans-serif;
+    background: #f8fafc;
     color: var(--text-color);
     line-height: 1.6;
     overflow-x: hidden;
@@ -31,35 +30,64 @@ body {
 }
 
 .navbar, #header {
-    background: linear-gradient(90deg, var(--dark-color) 0%, var(--secondary-color) 100%);
+    background: linear-gradient(90deg, #1a2233 60%, #ffb347 100%) !important;
+    font-family: 'Montserrat', 'Poppins', Arial, sans-serif;
     box-shadow: 0 2px 8px rgba(44,62,80,0.08);
     transition: var(--transition);
 }
 
-.navbar .nav-link, #header .nav-link {
-    color: var(--text-light) !important;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
+.navbar .navbar-brand, #header .navbar-brand {
+    color: #ffb347 !important;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
+}
+
+.navbar .nav-link, #header .nav-link, .navbar .dropdown-item {
+    color: #fff !important;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-size: 1.08rem;
+    transition: color 0.2s;
     position: relative;
 }
 
-.navbar .nav-link:not(.active):hover, #header .nav-link:not(.active):hover {
-    opacity: 0.8;
+.navbar .nav-link.active, #header .nav-link.active,
+.navbar .nav-link:focus, #header .nav-link:focus,
+.navbar .nav-link:hover, #header .nav-link:hover {
+    color: #1a2233 !important;
+    background: #ffb347 !important;
+    border-radius: 8px;
 }
 
-.navbar .nav-link.active, #header .nav-link.active {
-    color: var(--accent-color) !important;
+.navbar .dropdown-menu {
+    background: #232b3e;
+    border: none;
 }
 
-.navbar .nav-link.active::after, #header .nav-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 1rem;
-    right: 1rem;
-    height: 2px;
-    background: var(--accent-color);
+.navbar .dropdown-item {
+    color: #fff !important;
+    font-weight: 500;
 }
+
+.navbar .dropdown-item:hover, .navbar .dropdown-item:focus {
+    background: #ffb347;
+    color: #1a2233 !important;
+}
+
+.navbar-toggler {
+    border-color: #ffb347;
+}
+
+.navbar-toggler-icon {
+    background-image: none;
+}
+
+.navbar-toggler[aria-expanded="true"] {
+    background: #232b3e;
+}
+
+/* ...existing code... */
 
 .hero-section {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
@@ -439,6 +467,72 @@ body {
     color: var(--text-light);
     transform: translateY(-3px);
 }
+
+/* Estilos específicos do cadastro */
+.cadastro-hero {
+    background: linear-gradient(90deg, #1a2233 60%, #ffb347 100%);
+    color: #fff;
+    padding: 60px 0 40px 0;
+    border-radius: 0 0 32px 32px;
+    margin-bottom: 40px;
+}
+.cadastro-hero .bi {
+    font-size: 3rem;
+    color: #ffb347;
+    background: #fff;
+    border-radius: 50%;
+    padding: 18px;
+    margin-bottom: 16px;
+}
+.cadastro-section {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(30,40,60,0.07);
+    padding: 40px 32px;
+    max-width: 480px;
+    margin: -80px auto 32px auto;
+}
+.form-label {
+    font-weight: 600;
+    color: #1a2233;
+}
+.form-control, .form-select {
+    border-radius: 8px;
+    font-size: 1.05rem;
+}
+.btn-cadastro {
+    background: #1a2233;
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+.btn-cadastro:hover {
+    background: #ffb347;
+    color: #1a2233;
+}
+.btn-back {
+    background: #fff;
+    color: #1a2233;
+    border-radius: 8px;
+    font-weight: 600;
+    border: 1px solid #1a2233;
+}
+.btn-back:hover {
+    background: #ffb347;
+    color: #1a2233;
+    border-color: #ffb347;
+}
+.form-icon {
+    font-size: 1.3rem;
+    color: #ffb347;
+    margin-right: 8px;
+}
+@media (max-width: 575.98px) {
+    .cadastro-section { padding: 24px 8px; }
+}
+
+/* ...existing code... */
 
 /* Efeito de onda nos botões */
 .wave-effect {

@@ -128,6 +128,20 @@ class Servico extends Conexao
         }
 
     }
+    //metodo cancelar servico
+    public function cancelar($servico_id, $cliente_id, $status_id)
+{
+    try {
+        $bd = $this->conectar();
+        $sql = "UPDATE tb_solicita_servico SET status_id = 6 WHERE id = :id AND cliente_id = :cliente_id";
+        $query = $bd->prepare($sql);
+        $query->bindValue(':id', $servico_id, PDO::PARAM_INT);
+        $query->bindValue(':cliente_id', $cliente_id, PDO::PARAM_INT);
+        return $query->execute();
+    } catch (PDOException $e) {
+        return false;
+    }
+}
 
     //método alterar serviço
     public function AlterarServico($id_servico, $descricao_servico)

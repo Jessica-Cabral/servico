@@ -119,6 +119,20 @@ class Cliente {
             return false;
         }
     }
+
+    public function create($dados) {
+        try {
+            $sql = "INSERT INTO tb_pessoa (nome, email, senha, tipo) VALUES (:nome, :email, :senha, :tipo)";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindValue(':nome', $dados['nome']);
+            $stmt->bindValue(':email', $dados['email']);
+            $stmt->bindValue(':senha', $dados['senha']);
+            $stmt->bindValue(':tipo', $dados['tipo']);
+            return $stmt->execute();
+        } catch (Exception $e) {
+            return false;
+        }
+    }
 }
 ?>
 

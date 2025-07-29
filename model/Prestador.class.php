@@ -194,6 +194,28 @@ class Prestador extends Conexao
             return false;
         }
     }
+
+    // Método para obter prestadores recomendados por tipo de serviço
+    public function getRecomendadosPorTipo($tipo_servico_id, $limite = 3)
+    {
+        // Ajuste o nome das tabelas/colunas conforme seu banco
+        $sql = "SELECT p.id_prestador as id, u.nome, p.avaliacao_media as avaliacao, 0 as total_avaliacoes
+                FROM tb_prestador p
+                INNER JOIN tb_usuario u ON u.id_usuario = p.id_usuario
+                WHERE p.id_categoria = :tipo
+                ORDER BY p.avaliacao_media DESC
+                LIMIT :limite";
+        try {
+            $bd = $this->conectar();
+            $query = $bd->prepare($sql);
+            $query->bindValue(':tipo', $tipo_servico_id, PDO::PARAM_INT);
+            $query->bindValue(':limite', $limite, PDO::PARAM_INT);
+            $query->execute();
+            return $query->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return [];
+        }
+    }
 }
 
 ?>

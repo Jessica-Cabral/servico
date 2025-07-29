@@ -23,5 +23,17 @@ class PrestadorController {
     public function listarTodos() {
         return $this->prestadorModel->getAll();
     }
+
+    public function cadastrarPrestador($nome, $email, $senha) {
+        $prestador = new Prestador();
+        $dados = [
+            'nome' => $nome,
+            'email' => $email,
+            'senha' => password_hash($senha, PASSWORD_DEFAULT),
+            'tipo' => 'prestador'
+        ];
+        // Implemente um método create no model Prestador se não existir
+        return $prestador->create($dados);
+    }
 }
 ?>

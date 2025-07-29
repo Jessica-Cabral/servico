@@ -25,16 +25,14 @@
     <!-- AOS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
-   <link rel="stylesheet" href="assets/css/homepage.css">
-  
-
+    <link rel="stylesheet" href="assets/css/homepage.css">
 </head>
 <body>
 <header id="header" class="fixed-top shadow-sm">
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(90deg, #1a2233 60%, #ffb347 100%);">
       <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="#">
-        <i class="bi bi-tools"> </i>
+        <a class="navbar-brand d-flex align-items-center" href="HomePage.php" style="gap: 12px;">
+          <i class="bi bi-tools" style="font-size: 2rem; margin-right: 8px;"></i>
           <span class="fw-bold">Chama Serviço</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,16 +41,16 @@
         <div class="collapse navbar-collapse" id="mainNavbar">
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active d-flex align-items-center" href="#"><i class="bi bi-house-door me-1"></i> Home</a>
+              <a class="nav-link d-flex align-items-center" href="HomePage.php"><i class="bi bi-house-door me-1"></i> Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center" href="HomeServicos.php"><i class="bi bi-briefcase me-1"></i> Serviços</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link d-flex align-items-center" href="CadUsuario.html"><i class="bi bi-person-plus me-1"></i> Crie sua conta</a>
+              <a class="nav-link d-flex align-items-center" href="CadUsuario.php"><i class="bi bi-person-plus me-1"></i> Crie sua conta</a>
             </li>
             <li class="nav-item">
               <a class="nav-link d-flex align-items-center" href="Login.php"><i class="bi bi-box-arrow-in-right me-1"></i> Entrar</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active d-flex align-items-center" href="about.html"><i class="bi bi-info-circle me-1"></i> Sobre nós</a>
             </li>
           </ul>
         </div>
@@ -69,10 +67,10 @@
                     <h1>Precisando de um serviço? Encontre o profissional ideal!</h1>
                     <p>Conectamos quem precisa de serviço com quem oferece. Rápido, fácil e seguro.</p>
                     <div class="d-flex flex-wrap">
-                        <a href="CadUsuario.html" class="btn btn-cta shadow wave-effect" data-aos="zoom-in">
+                        <a href="CadUsuario.php" class="btn btn-cta shadow wave-effect" data-aos="zoom-in">
                             <i class="bi bi-person-plus me-2"></i>Solicitar um serviço
                         </a>
-                        <a href="CadUsuario.html" class="btn btn-cta shadow wave-effect" data-aos="zoom-in">
+                        <a href="CadUsuario.php" class="btn btn-cta shadow wave-effect" data-aos="zoom-in">
                             <i class="bi bi-briefcase me-2"></i>Sou prestador
                         </a>
                     </div>
@@ -176,7 +174,7 @@
                     <div class="icon"><i class="bi bi-people"></i></div>
                     <h4 class="fw-bold">Clientes</h4>
                     <p>Pessoas que precisam de serviços domésticos, reformas, reparos, instalações, montagens, serviços técnicos e muito mais.</p>
-                    <a href="CadUsuario.html" class="btn btn-sm btn-primary mt-2 wave-effect">Quero contratar</a>
+                    <a href="CadUsuario.php" class="btn btn-sm btn-primary mt-2 wave-effect">Quero contratar</a>
                 </div>
             </div>
             <div class="col-lg-5 mb-4" data-aos="fade-left">
@@ -184,7 +182,7 @@
                     <div class="icon"><i class="bi bi-person-badge"></i></div>
                     <h4 class="fw-bold">Prestadores</h4>
                     <p>Profissionais autônomos, técnicos, artesãos e empresas que querem mais clientes e visibilidade para seus serviços.</p>
-                    <a href="CadUsuario.html" class="btn btn-sm btn-primary mt-2 wave-effect">Quero trabalhar</a>
+                    <a href="CadUsuario.php" class="btn btn-sm btn-primary mt-2 wave-effect">Quero trabalhar</a>
                 </div>
             </div>
         </div>
@@ -246,9 +244,7 @@
                 </div>
             </div>
         </div>
-        <div class="text-center mt-4">
-            <a href="HomeServicos.php" class="btn btn-primary wave-effect">Ver todos os serviços</a>
-        </div>
+       
     </section>
 
     <!-- App em breve -->
@@ -267,7 +263,7 @@
                 </div>
             </div>
             <div class="col-lg-5 text-center">
-                <img src="assets/img/app-mockup.png" alt="App Chama Serviço" class="img-fluid floating" style="max-width: 280px;">
+                <img src="assets/img/logochamaser.png" alt="App Chama Serviço" class="img-fluid floating" style="max-width: 280px;">
             </div>
         </div>
     </section>
@@ -351,7 +347,7 @@
         <div class="container">
             <h2 class="mb-4">Pronto para facilitar sua vida?</h2>
             <p class="mb-5 lead">Junte-se a milhares de pessoas que já usam o Chama Serviço</p>
-            <a href="CadUsuario.html" class="btn btn-lg me-2 wave-effect"><i class="bi bi-person-plus me-2"></i>Quero me cadastrar</a>
+            <a href="CadUsuario.php" class="btn btn-lg me-2 wave-effect"><i class="bi bi-person-plus me-2"></i>Quero me cadastrar</a>
             <a href="contact.html" class="btn btn-lg wave-effect"><i class="bi bi-chat-dots me-2"></i>Fale conosco</a>
         </div>
     </section>

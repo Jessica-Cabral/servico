@@ -12,9 +12,9 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
-require_once __DIR__ . '/../../models/Servico.php';
-require_once __DIR__ . '/../../models/Proposta.php';
-require_once __DIR__ . '/../../models/Prestador.php';
+require_once __DIR__ . '/../../models/Servico.class.php';
+require_once __DIR__ . '/../../models/Proposta.class.php';
+require_once __DIR__ . '/../../models/Prestador.class.php';
 
 $servico = new Servico();
 $proposta = new Proposta();
@@ -625,7 +625,8 @@ $imagens = $servico->getImagensServico($servico_id);
                 </div>
                 <div class="card-body">
                     <?php 
-                    $prestadores_recomendados = $prestador_model->getRecomendadosPorTipo($detalhes['tipo_servico_id'], 3);
+                    // Troque $prestador_model por $prestador
+                    $prestadores_recomendados = $prestador->getRecomendadosPorTipo($detalhes['tipo_servico_id'], 3);
                     foreach ($prestadores_recomendados as $prestador_rec): 
                     ?>
                     <div class="prestador-card-mini">

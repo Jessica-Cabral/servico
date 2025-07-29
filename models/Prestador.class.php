@@ -186,5 +186,39 @@ class Prestador {
             return [];
         }
     }
+
+    /**
+     * Retorna prestadores recomendados por tipo de serviço.
+     * @param int $tipo_servico_id
+     * @param int $limite
+     * @return array
+     */
+    public function getRecomendadosPorTipo($tipo_servico_id, $limite = 3) {
+        $sql = "SELECT p.id, p.nome, p.avaliacao, p.total_avaliacoes
+                FROM prestadores p
+                INNER JOIN prestador_servico ps ON ps.prestador_id = p.id
+                WHERE ps.tipo_servico_id = :tipo
+                ORDER BY p.avaliacao DESC, p.total_avaliacoes DESC
+                LIMIT :limite";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':tipo', $tipo_servico_id, PDO::PARAM_INT);
+        $stmt->bindValue(':limite', $limite, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function create($dados) {
+        try {
+            $sql = "INSERT INTO tb_pessoa (nome, email, senha, tipo) VALUES (:nome, :email, :senha, :tipo)";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindValue(':nome', $dados['nome']);
+            $stmt->bindValue(':email', $dados['email']);
+            $stmt->bindValue(':senha', $dados['senha']);
+            $stmt->bindValue(':tipo', $dados['tipo']);
+            return $stmt->execute();
+        } catch (Exception $e) {
+            return false;
+        }
+    }
 }
 ?>

@@ -7,9 +7,9 @@ if (!isset($_SESSION['cliente_id'])) {
     exit();
 }
 
-require_once __DIR__ . '/../../models/Servico.php';
-require_once __DIR__ . '/../../models/Proposta.php';
-require_once __DIR__ . '/../../models/Notificacao.php';
+require_once __DIR__ . '/../../models/Servico.class.php';
+require_once __DIR__ . '/../../models/Proposta.class.php';
+require_once __DIR__ . '/../../models/Notificacao.class.php';
 
 $servico = new Servico();
 $proposta = new Proposta();

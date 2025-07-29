@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['cliente_id'])) {
-    header('Location: ../auth/login.php');
+    header('Location:Login.php');
     exit();
 }
 

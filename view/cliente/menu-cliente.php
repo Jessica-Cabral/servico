@@ -64,7 +64,13 @@
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-warning" href="../../switch-user.php?type=prestador"><i class="fas fa-exchange-alt me-2"></i> Trocar para Prestador</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="../../logout.php"><i class="fas fa-sign-out-alt me-2"></i> Sair</a></li>
+                        <li>
+                            <form action="../../Login.php" method="post" style="margin:0;">
+                                <button type="submit" name="logout" class="dropdown-item">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Sair
+                                </button>
+                            </form>
+                        </li>
                     </ul>
                 </li>
             </ul>

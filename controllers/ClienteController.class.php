@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '/../models/Cliente.php';
-require_once __DIR__ . '/../models/Servico.php';
+require_once __DIR__ . '/../models/Cliente.class.php';
+require_once __DIR__ . '/../models/Servico.class.php';
 
 class ClienteController {
     private $cliente;
@@ -131,6 +131,20 @@ class ClienteController {
         }
         header('Location: ../view/cliente/clienteDashboard.php');
         exit();
+    }
+
+    public function cadastrarCliente($nome, $email, $senha) {
+        // Aqui você pode adicionar validações extras se desejar
+        $cliente = new Cliente();
+        // Adapte conforme o construtor e métodos do seu model
+        $dados = [
+            'nome' => $nome,
+            'email' => $email,
+            'senha' => password_hash($senha, PASSWORD_DEFAULT),
+            'tipo' => 'cliente'
+        ];
+        // Implemente um método create no model Cliente se não existir
+        return $cliente->create($dados);
     }
 }
 ?>

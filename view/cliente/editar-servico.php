@@ -11,7 +11,7 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
-require_once __DIR__ . '/../../models/Servico.php';
+require_once __DIR__ . '/../../models/Servico.class.php';
 
 $servico = new Servico();
 $servico_id = $_GET['id'];

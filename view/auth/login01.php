@@ -154,6 +154,7 @@ if ($_POST) {
                 </div>
             </div>
         </div>
+        
     </div>
     
     <!-- Bootstrap JS -->

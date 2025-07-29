@@ -1,6 +1,6 @@
 <?php
-// Incluir classe de conexão
-include_once 'Conexao.class.php';
+// Corrija o caminho para o arquivo de conexão
+include_once __DIR__ . '/Conexao.class.php';
 
 class Pessoa extends Conexao
 {

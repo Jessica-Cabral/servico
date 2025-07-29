@@ -1,13 +1,19 @@
 <?php
 session_start();
 
+if (isset($_POST['logout'])) {
+    session_unset();
+    session_destroy();
+    header('Location: Login.php');
+    exit();
+}
 
 // Se já estiver logado, redirecionar para o dashboard correto
 if (isset($_SESSION['cliente_id'])) {
-    header('Location: ../cliente/clienteDashboard.php');
+    header('Location: view/cliente/clienteDashboard.php');
     exit();
 } elseif (isset($_SESSION['prestador_id'])) {
-    header('Location: ../prestador/prestadorDashboard.php');
+    header('Location: view/prestador/prestadorDashboard.php');
     exit();
 }
 
@@ -63,15 +69,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Login'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Chama Serviço</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Font Awesome Icons (opcional, para compatibilidade) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/homepage.css">
     <link rel="stylesheet" href="assets/css/Login.css">
+    <style>
+        /* Pequeno ajuste para centralizar melhor em telas grandes */
+        body { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: none; }
+    </style>
 </head>
 <body>
     <div class="container min-vh-100 d-flex flex-column justify-content-center align-items-center">
@@ -81,11 +86,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Login'])) {
                     <div class="card-body p-4">
                         <div class="text-center mb-3">
                             <i class="bi bi-tools fa-2x text-primary mb-2"></i>
-                            <h3 class="fw-bold mb-1" style="font-size:1.5rem;">Chama Serviço</h3>
-                            <p class="text-muted mb-0" style="font-size:0.98rem;">Acesse sua conta para usar o sistema</p>
+                            <h3 class="fw-bold mb-1" style="font-size:1.6rem; color:#1a2233;">Chama Serviço</h3>
+                            <p class="text-muted mb-0" style="font-size:1.05rem;">Acesse sua conta para usar o sistema</p>
                         </div>
-                        <form action="login.php" method="post" id="loginForm" autocomplete="off">
-                       
+                        <form action="Login.php" method="post" id="loginForm" autocomplete="off">
                             <fieldset class="border rounded-3 p-3 mb-3">
                                 <legend class="float-none w-auto px-2 fs-6 text-primary mb-3">
                                     <i class="bi bi-person-circle me-1"></i> Login
@@ -98,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Login'])) {
                                         </span>
                                         <input type="email" class="form-control" id="email" name="email"
                                             value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"
-                                            placeholder="Digite seu e-mail" required>
+                                            placeholder="Digite seu e-mail" required autofocus>
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -120,18 +124,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Login'])) {
                                     </a>
                                 </div>
                                 <div class="btn-group-login d-flex flex-column gap-2 mt-3">
-                                    <button name="Login" class="btn btn-primary btn-login btn-sm w-100" type="submit">
+                                    <button name="Login" class="btn btn-login btn-sm w-100" type="submit">
                                         <i class="bi bi-box-arrow-in-right"></i> Entrar
                                     </button>
-                                    <button name="abrirformpessoa" class="btn btn-outline-secondary btn-sm w-100" type="submit">
+                                    <a href="CadUsuario.php" class="btn btn-outline-secondary btn-sm w-100">
                                         <i class="bi bi-person-plus"></i> Criar uma conta
-                                    </button>
+                                    </a>
                                 </div>
                             </fieldset>
                         </form>
                         <?php if ($erro): ?>
-    <div class="alert alert-danger"><?php echo htmlspecialchars($erro); ?></div>
-<?php endif; ?>
+                            <div class="alert alert-danger"><?php echo htmlspecialchars($erro); ?></div>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="text-center mt-3">
@@ -146,9 +150,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Login'])) {
             <img src="assets/img/user.png" alt="icone-usuário" title="fazer-login">
         </div>
     </div>
-
-    
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Visualizador de senha

@@ -11,7 +11,7 @@ if ($_POST && isset($_POST['ajax'])) {
     try {
         error_log("POST data: " . print_r($_POST, true));
         
-        require_once __DIR__ . '/../../models/Servico.php';
+        require_once __DIR__ . '/../../models/Servico.class.php';
 
         $servico = new Servico();
         $endereco_id = null;
@@ -110,7 +110,7 @@ if ($_POST && isset($_POST['ajax'])) {
     exit();
 }
 
-require_once '../../models/Servico.php';
+require_once '../../models/Servico.class.php';
 
 $servico = new Servico();
 $tipos_servico = $servico->getTiposServico();
