@@ -1232,6 +1232,42 @@ require_once 'menu-cliente.php';
                 btnSubmit.disabled = false;
             });
         });
+
+        function aceitarProposta(form, servicoId) {
+            if (event) event.preventDefault(); // Use 'event' do escopo global
+            const propostaId = form.querySelector('input[name="proposta_id"]').value;
+
+            fetch('gerenciar-proposta.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `action=aceitar&proposta_id=${encodeURIComponent(propostaId)}`
+            })
+            .then(response => {
+                // Verifica se a resposta é JSON válida
+                if (!response.ok) throw new Error('Erro de rede');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-success alert-dismissible fade show mt-3';
+                    alertDiv.innerHTML = `
+                        <i class="fas fa-check-circle me-2"></i>
+                        Proposta aceita com sucesso! O serviço está em execução.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    form.parentNode.insertBefore(alertDiv, form.nextSibling);
+                    setTimeout(() => { window.location.reload(); }, 1500);
+                } else {
+                    alert('Erro ao aceitar proposta: ' + (data.message || 'Tente novamente.'));
+                }
+            })
+            .catch((error) => {
+                alert('Erro de conexão ao aceitar proposta.');
+                console.error(error);
+            });
+            return false;
+        }
     </script>
     
     <!-- Moment.js para formatação de datas -->
@@ -1242,4 +1278,3 @@ require_once 'menu-cliente.php';
     &copy; <?php echo date('Y'); ?> Chama Serviço. Todos os direitos reservados.
 </footer>
 </html>
-   

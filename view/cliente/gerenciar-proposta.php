@@ -44,7 +44,8 @@ try {
                     $detalhes_proposta['solicitacao_id'], 
                     $servico_detalhes['titulo']
                 );
-                
+                // Atualiza status do serviço para "Serviço em execução" (id 4)
+                $servico->atualizarStatus($detalhes_proposta['solicitacao_id'], 4);
                 echo json_encode(['success' => true, 'message' => 'Proposta aceita com sucesso!']);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Erro ao aceitar proposta.']);

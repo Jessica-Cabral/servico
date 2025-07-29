@@ -1,6 +1,12 @@
 <?php
 session_start();
 
+// Adicione esta verificação logo após session_start()
+if (empty($_SESSION['prestador_id'])) {
+    header('Location: ../../Login.php');
+    exit();
+}
+
 require_once __DIR__ . '/../../models/Prestador.class.php';
 require_once __DIR__ . '/../../models/Servico.class.php';
 require_once __DIR__ . '/../../models/Proposta.class.php';
@@ -162,7 +168,7 @@ $grafico_dados = $prestador->getGraficoDados($prestador_id);
                             <i class="fas fa-user-circle me-1"></i>
                             <?php echo htmlspecialchars($prestador_nome); ?>
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu dropdown-menu-end" style="max-width: 260px; right: 0; left: auto;">
                             <li><a class="dropdown-item" href="perfil.php"><i class="fas fa-cog me-2"></i> Configurações</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <!-- Link para desenvolvimento -->
@@ -479,10 +485,12 @@ $grafico_dados = $prestador->getGraficoDados($prestador_id);
             <div class="modal-body">
               <div class="text-center mb-3">
                 <?php
-                  // Corrige o caminho da foto para funcionar no navegador
+                  // Sempre busca a foto atualizada do banco
                   $foto_perfil = !empty($prestador_dados['foto_perfil']) ? $prestador_dados['foto_perfil'] : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                  // Se não for URL absoluta, monta o caminho relativo
                   if (!preg_match('/^https?:\/\//', $foto_perfil)) {
-                      $foto_perfil = '/' . ltrim($foto_perfil, '/');
+                      // Se já estiver no diretório de uploads, mantenha, senão ajuste conforme sua estrutura
+                      $foto_perfil = (strpos($foto_perfil, 'uploads/') === 0 ? '' : '/uploads/') . ltrim($foto_perfil, '/');
                   }
                 ?>
                 <img id="imgPerfil" src="<?php echo htmlspecialchars($foto_perfil); ?>" alt="Foto de Perfil" class="rounded-circle mb-2" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #ffc107;">
@@ -550,7 +558,7 @@ $grafico_dados = $prestador->getGraficoDados($prestador_id);
           btnEditar.setAttribute('disabled', 'disabled');
         });
 
-        // Preview da imagem de perfil
+        // Preview da imagem de perfil ao selecionar novo arquivo
         const fotoInput = document.getElementById('foto_perfil');
         if (fotoInput) {
           fotoInput.addEventListener('change', function(e) {
@@ -560,6 +568,17 @@ $grafico_dados = $prestador->getGraficoDados($prestador_id);
             }
           });
         }
+
+        // Sempre que abrir a modal, recarrega a imagem do banco (caso tenha sido alterada em outro local)
+        const perfilModal = document.getElementById('perfilModal');
+        perfilModal.addEventListener('show.bs.modal', function () {
+          // Recarrega a imagem do banco (força reload removendo cache)
+          const img = document.getElementById('imgPerfil');
+          if (img) {
+            const src = img.getAttribute('src').split('?')[0];
+            img.setAttribute('src', src + '?t=' + new Date().getTime());
+          }
+        });
       });
 
       // Exibe modal de sucesso se perfil foi atualizado

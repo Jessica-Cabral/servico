@@ -148,6 +148,10 @@ body {
     background: #fff;
 }
 
+.input-group .form-control {
+    border-radius: 12px !important;
+}
+
 .form-label {
     font-weight: 600;
     color: #1a2233;
