@@ -1,0 +1,80 @@
+/* Estilos gerais */
+
+:root {
+  --primary-color: #6a2c7c; /* Roxo principal */
+  --secondary-color: #572264; /* Roxo escuro */
+  --accent-color: #483D8B; /* Roxo azulado */
+  --light-gray: #ddd; /* Cinza claro */
+  --silver: silver; /* Prata */
+  --dark-color: #1c1c1c; /* Preto escuro */
+}
+
+
+body {
+ 
+  display: flex;
+  flex-direction: column;
+  font-family: 'Arial', sans-serif;
+  background-color: var(--light-gray);
+  color: var(--dark-color);
+}
+
+.navbar {
+  background-color: var(--primary-color);
+}
+
+.navbar-brand, .nav-link {
+  color: #fff !important;
+}
+
+.navbar-brand:hover, .nav-link:hover {
+  color: var(--silver) !important;
+}
+
+.btn-primary {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.card {
+  border: 1px solid var(--light-gray);
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background-color: var(--primary-color);
+  color: #fff;
+  font-weight: bold;
+}
+
+.form-control:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 5px rgba(72, 61, 139, 0.3);
+}
+
+.profile-img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid var(--primary-color);
+}
+.card-body p {
+  margin-bottom: 0.5rem;
+}
+
+#resultadosBusca .profissional {
+  border-bottom: 1px solid var(--light-gray);
+  padding: 10px 0;
+}
+
+#resultadosBusca .profissional:last-child {
+  border-bottom: none;
+}
+

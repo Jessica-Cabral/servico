@@ -1,0 +1,121 @@
+/* Reset e estilos básicos */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #6a2c7c;
+}
+
+/* Formulário */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input, textarea, select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #6a2c7c;
+    outline: none;
+}
+
+button {
+    background-color: #6a2c7c;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #572264;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    input, textarea, select, button {
+        font-size: 0.9rem;
+    }
+}
+#menu-header1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #6a2c7c;
+    padding: 10px 20px;
+}
+.menu-logo1 img {
+    height: 50px;
+}
+.menu-navbar1 ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.menu-navbar1 ul li {
+    margin-left: 20px;
+}
+
+.menu-navbar1 ul li a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.menu-navbar1 ul li a:hover,
+.menu-navbar1 ul li a.active {
+    color: #f8b400;
+}
+/* Responsividade do cabeçalho */
+@media (max-width: 768px) {
+    #menu-header1 {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .menu-navbar1 ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .menu-navbar1 ul li {
+        margin-left: 0;
+    }
+}
