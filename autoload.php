@@ -8,7 +8,7 @@ function autoloadModels($class) {
     ];
     foreach ($paths as $file) {
         if (file_exists($file)) {
-            require_once $file;
+            require_once $file ;
             return;
         }
     }
