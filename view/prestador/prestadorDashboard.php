@@ -427,10 +427,10 @@ $grafico_dados = $prestador->getGraficoDados($prestador_id);
                             </div>
                             <div class="col-md-3 mb-3">
                                 <div class="d-grid">
-                                    <a href="perfil.php" class="btn btn-outline-warning btn-lg">
+                                    <button type="button" class="btn btn-outline-warning btn-lg" data-bs-toggle="modal" data-bs-target="#perfilModal">
                                         <i class="fas fa-user fa-2x mb-2"></i><br>
                                         Meu Perfil
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -487,13 +487,18 @@ $grafico_dados = $prestador->getGraficoDados($prestador_id);
                 <?php
                   // Sempre busca a foto atualizada do banco
                   $foto_perfil = !empty($prestador_dados['foto_perfil']) ? $prestador_dados['foto_perfil'] : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-                  // Se não for URL absoluta, monta o caminho relativo
+                  // Corrige o caminho apenas se não for URL absoluta e não começa com "view/"
                   if (!preg_match('/^https?:\/\//', $foto_perfil)) {
-                      // Se já estiver no diretório de uploads, mantenha, senão ajuste conforme sua estrutura
-                      $foto_perfil = (strpos($foto_perfil, 'uploads/') === 0 ? '' : '/uploads/') . ltrim($foto_perfil, '/');
+                      // Se já começa com "view/", não adiciona nada
+                      if (strpos($foto_perfil, 'view/') === 0) {
+                          $foto_perfil = $foto_perfil;
+                      } else {
+                          // Se começa com "uploads/", adiciona o caminho relativo correto
+                          $foto_perfil = 'view/prestador/' . ltrim($foto_perfil, '/');
+                      }
                   }
                 ?>
-                <img id="imgPerfil" src="<?php echo htmlspecialchars($foto_perfil); ?>" alt="Foto de Perfil" class="rounded-circle mb-2" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #ffc107;">
+                <img id="imgPerfil" src="../../<?php echo htmlspecialchars($foto_perfil); ?>" alt="Foto de Perfil" class="rounded-circle mb-2" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #ffc107;">
                 <div class="mb-2">
                   <input type="file" class="form-control" name="foto_perfil" id="foto_perfil" accept="image/*" disabled>
                 </div>
@@ -586,6 +591,12 @@ $grafico_dados = $prestador->getGraficoDados($prestador_id);
         <?php if (!empty($_GET['sucesso'])): ?>
           var sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
           sucessoModal.show();
+          // Remove o parâmetro 'sucesso' da URL após exibir o modal
+          if (window.history.replaceState) {
+            const url = new URL(window.location);
+            url.searchParams.delete('sucesso');
+            window.history.replaceState({}, document.title, url.pathname + url.search);
+          }
         <?php endif; ?>
       });
     </script>

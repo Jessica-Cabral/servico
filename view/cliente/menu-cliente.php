@@ -18,11 +18,7 @@
                 <li class="nav-item">
                     <a class="nav-link<?php if(basename($_SERVER['PHP_SELF']) == 'meus-servicos.php') echo ' active'; ?>" href="meus-servicos.php"><i class="fas fa-list me-1"></i> Meus Serviços</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#perfilModal">
-                        <i class="fas fa-user me-1"></i> Perfil
-                    </a>
-                </li>
+             
             </ul>
             <ul class="navbar-nav align-items-center">
                 <!-- Notificações -->

@@ -54,6 +54,9 @@ require_once 'menu-cliente.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Cliente | Chama Serviço</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../../assets/img/favicon.png">
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
@@ -195,7 +198,7 @@ require_once 'menu-cliente.php';
                                 Novo Serviço
                             </a>
                             <!-- Botão para abrir modal perfil -->
-                            <button class="btn btn-outline-secondary btn-custom" data-bs-toggle="modal" data-bs-target="#modalPerfilCliente" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver/editar perfil">
+                            <button class="btn btn-outline-secondary btn-custom" id="btnAbrirPerfil" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver/editar perfil">
                                 <i class="fas fa-user"></i> Perfil
                             </button>
                         </div>
@@ -380,7 +383,7 @@ require_once 'menu-cliente.php';
         </div>
     </div>
 
-    <!-- Modal Perfil Cliente -->
+    <!-- Modal de Perfil -->
     <div class="modal fade" id="modalPerfilCliente" tabindex="-1" aria-labelledby="modalPerfilClienteLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -427,9 +430,14 @@ require_once 'menu-cliente.php';
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Chart.js Script -->
     <script>
+        // Garante que a modal será aberta ao clicar no botão
+        document.getElementById('btnAbrirPerfil').addEventListener('click', function(e) {
+            e.preventDefault();
+            var perfilModal = new bootstrap.Modal(document.getElementById('modalPerfilCliente'));
+            perfilModal.show();
+        });
+
         // Configuração do gráfico
         const ctx = document.getElementById('servicesChart').getContext('2d');
         const servicesChart = new Chart(ctx, {
@@ -468,9 +476,7 @@ require_once 'menu-cliente.php';
                 }
             }
         });
-    </script>
 
-    <script>
         // Ativa tooltips Bootstrap
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -521,5 +527,6 @@ require_once 'menu-cliente.php';
     &copy; <?php echo date('Y'); ?> Chama Serviço. Todos os direitos reservados.
 </footer>
 
+<?php include 'perfil-modal.php'; ?>
 </body>
 </html>
