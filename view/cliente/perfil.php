@@ -1,3 +1,5 @@
+
+
 <!-- Modal de Editar Perfil -->
 <div class="modal fade" id="profileModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -10,15 +12,15 @@
             </div>
             <div class="modal-body">
                 <form id="profileForm" action="{{ route('cliente.perfil.atualizar') }}" method="POST" enctype="multipart/form-data">
-                  
+
 
                     <!-- Foto do Perfil -->
                     <div class="text-center mb-4">
                         <div class="position-relative d-inline-block">
                             <img id="previewImage" src="{{ asset('images/default-profile.png') }}"
-                                 class="rounded-circle border" width="120" height="120" style="object-fit: cover;">
+                                class="rounded-circle border" width="120" height="120" style="object-fit: cover;">
                             <button type="button" class="btn btn-primary btn-sm position-absolute bottom-0 end-0 rounded-circle"
-                                    onclick="document.getElementById('foto_perfil').click()">
+                                onclick="document.getElementById('foto_perfil').click()">
                                 <i class="fas fa-camera"></i>
                             </button>
                         </div>
@@ -38,12 +40,12 @@
                                 <div class="col-md-6">
                                     <label for="nome" class="form-label fw-semibold">Nome Completo</label>
                                     <input type="text" class="form-control" id="nome" name="nome"
-                                           value="{{ $cliente->nome ?? '' }}" required>
+                                        value="{{ $cliente->nome ?? '' }}" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="telefone" class="form-label fw-semibold">Telefone</label>
                                     <input type="text" class="form-control" id="telefone" name="telefone"
-                                           value="{{ $cliente->telefone ?? '' }}" required placeholder="(11) 99999-9999">
+                                        value="{{ $cliente->telefone ?? '' }}" required placeholder="(11) 99999-9999">
                                 </div>
                             </div>
 
@@ -51,12 +53,12 @@
                                 <div class="col-md-6">
                                     <label for="cpf" class="form-label fw-semibold">CPF</label>
                                     <input type="text" class="form-control" id="cpf" name="cpf"
-                                           value="{{ $cliente->cpf ?? '' }}" maxlength="14" placeholder="000.000.000-00">
+                                        value="{{ $cliente->cpf ?? '' }}" maxlength="14" placeholder="000.000.000-00">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="email" class="form-label fw-semibold">Email</label>
                                     <input type="email" class="form-control" id="email" name="email"
-                                           value="{{ $cliente->email ?? '' }}" required>
+                                        value="{{ $cliente->email ?? '' }}" required>
                                 </div>
                             </div>
                         </div>
@@ -75,19 +77,19 @@
                             <div class="mb-3">
                                 <label for="senha_atual" class="form-label fw-semibold">Senha Atual</label>
                                 <input type="password" class="form-control" id="senha_atual" name="senha_atual"
-                                       placeholder="Digite sua senha atual">
+                                    placeholder="Digite sua senha atual">
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="nova_senha" class="form-label fw-semibold">Nova Senha</label>
                                     <input type="password" class="form-control" id="nova_senha" name="nova_senha"
-                                           placeholder="Mínimo 6 caracteres">
+                                        placeholder="Mínimo 6 caracteres">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="confirma_senha" class="form-label fw-semibold">Confirmar Nova Senha</label>
                                     <input type="password" class="form-control" id="confirma_senha" name="confirma_senha"
-                                           placeholder="Repita a nova senha">
+                                        placeholder="Repita a nova senha">
                                 </div>
                             </div>
                         </div>
@@ -122,7 +124,7 @@
                         <div class="col-12 text-center">
                             <div class="position-relative d-inline-block">
                                 <img id="previewFotoPerfil" src="<?php echo htmlspecialchars($dados['foto_perfil'] ?? '../../assets/img/default-user.png'); ?>"
-                                     class="rounded-circle border border-3 border-primary shadow" width="120" height="120" style="object-fit: cover;">
+                                    class="rounded-circle border border-3 border-primary shadow" width="120" height="120" style="object-fit: cover;">
                                 <label for="imagem" class="btn btn-primary btn-sm rounded-circle position-absolute bottom-0 end-0" style="width:36px;height:36px;">
                                     <i class="fas fa-camera"></i>
                                     <input type="file" id="imagem" name="foto_perfil" accept="image/*" class="d-none">
@@ -189,12 +191,12 @@
         </div>
     </div>
 </div>
+<!-- Scripts JS para preview de foto -->
 <script>
-document.getElementById('imagem').addEventListener('change', function(e) {
-    const [file] = e.target.files;
-    if (file) {
-        document.getElementById('previewFotoPerfil').src = URL.createObjectURL(file);
-    }
-});
-</script>
+    document.getElementById('imagem').addEventListener('change', function(e) {
+        const [file] = e.target.files;
+        if (file) {
+            document.getElementById('previewFotoPerfil').src = URL.createObjectURL(file);
+        }
+    });
 </script>

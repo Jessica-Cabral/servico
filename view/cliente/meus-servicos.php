@@ -17,38 +17,39 @@ require_once 'menu-cliente.php';
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Serviços - Chama Serviço</title>
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
         }
-        
+
         body {
             background-color: #f8f9fa;
         }
-        
+
         .navbar {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         }
-        
+
         .card {
             border: none;
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s;
         }
-        
+
         .card:hover {
             transform: translateY(-2px);
         }
@@ -62,7 +63,7 @@ require_once 'menu-cliente.php';
         .bg-gradient .card-body {
             background: transparent !important;
         }
-        
+
         .status-badge {
             padding: 5px 12px;
             border-radius: 20px;
@@ -77,7 +78,7 @@ require_once 'menu-cliente.php';
             border-radius: 8px;
             transition: all 0.2s;
         }
-        
+
         .btn-action:hover {
             transform: translateY(-1px);
         }
@@ -102,15 +103,15 @@ require_once 'menu-cliente.php';
         .vista-lista .servico-card {
             margin-bottom: 15px;
         }
-        
+
         .vista-lista .card {
             border-radius: 8px;
         }
-        
+
         .vista-lista .card-body {
             padding: 15px;
         }
-        
+
         .vista-lista .row-servico {
             display: flex;
             align-items: center;
@@ -121,9 +122,9 @@ require_once 'menu-cliente.php';
             background: white;
             transition: all 0.2s;
         }
-        
+
         .vista-lista .row-servico:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transform: translateY(-1px);
         }
 
@@ -140,7 +141,7 @@ require_once 'menu-cliente.php';
             position: relative;
             padding-left: 30px;
         }
-        
+
         .vista-timeline::before {
             content: '';
             position: absolute;
@@ -150,7 +151,7 @@ require_once 'menu-cliente.php';
             width: 2px;
             background: linear-gradient(to bottom, #3498db, #2c3e50);
         }
-        
+
         .timeline-item {
             position: relative;
             margin-bottom: 30px;
@@ -158,9 +159,9 @@ require_once 'menu-cliente.php';
             border-radius: 12px;
             padding: 20px;
             border: 1px solid #e3e6f0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        
+
         .timeline-item::before {
             content: '';
             position: absolute;
@@ -173,7 +174,7 @@ require_once 'menu-cliente.php';
             border: 3px solid white;
             box-shadow: 0 0 0 2px #3498db;
         }
-        
+
         .timeline-date {
             background: linear-gradient(135deg, #3498db, #2c3e50);
             color: white;
@@ -190,16 +191,16 @@ require_once 'menu-cliente.php';
             flex: 0 0 auto;
             width: 120px;
         }
-        
+
         .template-lista .col-md-4 {
             flex: 1;
         }
-        
+
         .template-lista .col-md-3 {
             flex: 0 0 auto;
             width: 120px;
         }
-        
+
         .template-lista .col-md-2 {
             flex: 0 0 auto;
             width: 100px;
@@ -225,7 +226,7 @@ require_once 'menu-cliente.php';
                 align-items: flex-start;
                 gap: 10px;
             }
-            
+
             .template-lista .col-md-1,
             .template-lista .col-md-2,
             .template-lista .col-md-3,
@@ -233,7 +234,7 @@ require_once 'menu-cliente.php';
                 width: 100%;
                 flex: none;
             }
-            
+
             .status-badge {
                 font-size: 0.75em;
                 padding: 3px 8px;
@@ -254,69 +255,70 @@ require_once 'menu-cliente.php';
             font-weight: 500;
             color: var(--primary-color);
         }
-        
+
         h5 {
             font-size: 1.25rem;
             font-weight: 500;
         }
-        
+
         .text-primary {
             color: var(--primary-color) !important;
         }
-        
+
         .text-success {
             color: #28a745 !important;
         }
-        
+
         .text-danger {
             color: #dc3545 !important;
         }
-        
+
         /* Botões */
         .btn-primary {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
         }
-        
+
         .btn-primary:hover {
             background-color: #1a2538;
             border-color: #1a2538;
         }
-        
+
         .btn-outline-primary {
             color: var(--primary-color);
             border-color: var(--primary-color);
         }
-        
+
         .btn-outline-primary:hover {
             background-color: var(--primary-color);
             color: white;
         }
-        
+
         /* Cards - não sobrescrever o dashboard */
         .card:not(.bg-gradient) {
             border: 1px solid #e3e6f0;
         }
-        
+
         .card-header {
             background-color: #f7f9fc;
             border-bottom: 1px solid #e3e6f0;
         }
-        
+
         .card-title {
             margin-bottom: 0;
         }
-        
+
         /* Outros */
         .alert {
             border-radius: 8px;
         }
-        
+
         .badge {
             border-radius: 12px;
         }
     </style>
 </head>
+
 <body>
     <!-- Remova ou comente o bloco de navbar antigo abaixo para evitar duplicidade -->
     <!--
@@ -356,7 +358,7 @@ require_once 'menu-cliente.php';
                                     <i class="fas fa-clock fa-2x opacity-75"></i>
                                 </div>
                                 <h4 class="fw-bold">
-                                    <?php echo count(array_filter($meus_servicos, fn($s) => in_array($s['status_id'], [1,2,3,4]))); ?>
+                                    <?php echo count(array_filter($meus_servicos, fn($s) => in_array($s['status_id'], [1, 2, 3, 4]))); ?>
                                 </h4>
                                 <small>Em Andamento</small>
                             </div>
@@ -413,8 +415,8 @@ require_once 'menu-cliente.php';
                 </div>
                 <div class="row mt-3">
                     <div class="col-md-6">
-                        <input type="text" class="form-control" id="buscarServico" 
-                               placeholder="🔍 Buscar por título, descrição ou endereço...">
+                        <input type="text" class="form-control" id="buscarServico"
+                            placeholder="🔍 Buscar por título, descrição ou endereço...">
                     </div>
                     <div class="col-md-6">
                         <div class="btn-group w-100">
@@ -449,7 +451,7 @@ require_once 'menu-cliente.php';
                     <i class="fas fa-clock"></i> Timeline
                 </button>
             </div>
-            
+
             <div class="dropdown">
                 <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                     <i class="fas fa-sort me-1"></i>
@@ -479,14 +481,14 @@ require_once 'menu-cliente.php';
         <?php else: ?>
             <div class="row vista-cards" id="servicosContainer">
                 <?php foreach ($meus_servicos as $item): ?>
-                    <div class="col-md-6 col-lg-4 mb-4 servico-card" 
-                         data-status="<?php echo $item['status_id']; ?>" 
-                         data-tipo="<?php echo $item['tipo_servico_id']; ?>"
-                         data-titulo="<?php echo strtolower($item['titulo']); ?>"
-                         data-descricao="<?php echo strtolower($item['descricao']); ?>"
-                         data-data="<?php echo strtotime($item['data_solicitacao']); ?>"
-                         data-valor="<?php echo $item['orcamento_estimado'] ?? 0; ?>">
-                        
+                    <div class="col-md-6 col-lg-4 mb-4 servico-card"
+                        data-status="<?php echo $item['status_id']; ?>"
+                        data-tipo="<?php echo $item['tipo_servico_id']; ?>"
+                        data-titulo="<?php echo strtolower($item['titulo']); ?>"
+                        data-descricao="<?php echo strtolower($item['descricao']); ?>"
+                        data-data="<?php echo strtotime($item['data_solicitacao']); ?>"
+                        data-valor="<?php echo $item['orcamento_estimado'] ?? 0; ?>">
+
                         <!-- Template para Vista Cards -->
                         <div class="card h-100 template-card">
                             <div class="card-body">
@@ -496,17 +498,17 @@ require_once 'menu-cliente.php';
                                         <?php echo htmlspecialchars($item['status_texto']); ?>
                                     </span>
                                 </div>
-                                
+
                                 <p class="text-muted small mb-2">
                                     <i class="fas fa-tag me-1"></i>
                                     <?php echo htmlspecialchars($item['tipo_servico']); ?>
                                 </p>
-                                
+
                                 <p class="card-text small">
                                     <?php echo htmlspecialchars(substr($item['descricao'], 0, 100)); ?>
                                     <?php if (strlen($item['descricao']) > 100): ?>...<?php endif; ?>
                                 </p>
-                                
+
                                 <div class="d-flex justify-content-between align-items-center text-muted small">
                                     <span>
                                         <i class="fas fa-calendar me-1"></i>
@@ -519,7 +521,7 @@ require_once 'menu-cliente.php';
                                         </span>
                                     <?php endif; ?>
                                 </div>
-                                
+
                                 <div class="mt-3">
                                     <small class="text-muted">
                                         <i class="fas fa-map-marker-alt me-1"></i>
@@ -527,38 +529,38 @@ require_once 'menu-cliente.php';
                                     </small>
                                 </div>
                             </div>
-                            
+
                             <div class="card-footer bg-transparent">
                                 <div class="d-grid gap-2 d-md-flex">
-                                    <button class="btn btn-outline-primary btn-sm flex-fill" 
-                                            onclick="verDetalhes(<?php echo $item['id']; ?>)">
+                                    <button class="btn btn-outline-primary btn-sm flex-fill"
+                                        onclick="verDetalhes(<?php echo $item['id']; ?>)">
                                         <i class="fas fa-eye me-1"></i>
                                         Detalhes
                                     </button>
-                                    
+
                                     <?php if ($item['status_id'] == 1): ?>
                                         <button class="btn btn-outline-secondary btn-sm btn-action"
-                                                onclick="editarServico(<?php echo $item['id']; ?>)">
+                                            onclick="editarServico(<?php echo $item['id']; ?>)">
                                             <i class="fas fa-edit me-1"></i>
                                             Editar
                                         </button>
                                         <button class="btn btn-outline-danger btn-sm btn-action"
-                                                onclick="cancelarServico(<?php echo $item['id']; ?>, '<?php echo htmlspecialchars($item['titulo']); ?>')"
-                                                title="Cancelar solicitação">
+                                            onclick="cancelarServico(<?php echo $item['id']; ?>, '<?php echo htmlspecialchars($item['titulo']); ?>')"
+                                            title="Cancelar solicitação">
                                             <i class="fas fa-times me-1"></i>
                                             Cancelar
                                         </button>
                                     <?php elseif ($item['status_id'] == 2): ?>
                                         <button class="btn btn-outline-danger btn-sm btn-action"
-                                                onclick="cancelarServico(<?php echo $item['id']; ?>, '<?php echo htmlspecialchars($item['titulo']); ?>')"
-                                                title="Cancelar solicitação">
+                                            onclick="cancelarServico(<?php echo $item['id']; ?>, '<?php echo htmlspecialchars($item['titulo']); ?>')"
+                                            title="Cancelar solicitação">
                                             <i class="fas fa-times me-1"></i>
                                             Cancelar
                                         </button>
                                     <?php elseif ($item['status_id'] == 5): ?>
                                         <button class="btn btn-outline-warning btn-sm btn-action"
-                                                onclick="avaliarServico(<?php echo $item['id']; ?>)"
-                                                title="Avaliar serviço concluído">
+                                            onclick="avaliarServico(<?php echo $item['id']; ?>)"
+                                            title="Avaliar serviço concluído">
                                             <i class="fas fa-star me-1"></i>
                                             Avaliar
                                         </button>
@@ -573,7 +575,7 @@ require_once 'menu-cliente.php';
                         <div class="row-servico template-lista" style="display: none;">
                             <div class="col-md-1 d-flex justify-content-center">
                                 <span class="status-badge" style="background-color: <?php echo $item['status_cor']; ?>; color: white;">
-                                    <?php 
+                                    <?php
                                     // Versões curtas para a vista lista
                                     $status_curto = [
                                         'Aguardando Propostas' => 'Aguardando',
@@ -615,9 +617,9 @@ require_once 'menu-cliente.php';
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     <?php if ($item['status_id'] == 1 || $item['status_id'] == 2): ?>
-                                        <button class="btn btn-outline-danger btn-sm" 
-                                                onclick="cancelarServico(<?php echo $item['id']; ?>, '<?php echo htmlspecialchars($item['titulo']); ?>')"
-                                                title="Cancelar">
+                                        <button class="btn btn-outline-danger btn-sm"
+                                            onclick="cancelarServico(<?php echo $item['id']; ?>, '<?php echo htmlspecialchars($item['titulo']); ?>')"
+                                            title="Cancelar">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     <?php endif; ?>
@@ -663,8 +665,8 @@ require_once 'menu-cliente.php';
                                     Ver Detalhes
                                 </button>
                                 <?php if ($item['status_id'] == 1 || $item['status_id'] == 2): ?>
-                                    <button class="btn btn-outline-danger btn-sm" 
-                                            onclick="cancelarServico(<?php echo $item['id']; ?>, '<?php echo htmlspecialchars($item['titulo']); ?>')">
+                                    <button class="btn btn-outline-danger btn-sm"
+                                        onclick="cancelarServico(<?php echo $item['id']; ?>, '<?php echo htmlspecialchars($item['titulo']); ?>')">
                                         <i class="fas fa-times me-1"></i>
                                         Cancelar
                                     </button>
@@ -735,15 +737,15 @@ require_once 'menu-cliente.php';
                 <form id="cancelarForm">
                     <div class="modal-body">
                         <input type="hidden" id="cancelarServicoId" name="servico_id">
-                        
+
                         <div class="alert alert-warning">
                             <i class="fas fa-exclamation-triangle me-2"></i>
                             <strong>Atenção!</strong> Esta ação não pode ser desfeita.
                         </div>
-                        
+
                         <p>Tem certeza que deseja cancelar a solicitação:</p>
                         <p class="fw-bold text-primary" id="tituloServicoCancelar"></p>
-                        
+
                         <div class="mb-3">
                             <label for="motivoCancelamento" class="form-label">Motivo do cancelamento (opcional)</label>
                             <select class="form-select" id="motivoCancelamento" name="motivo">
@@ -755,13 +757,13 @@ require_once 'menu-cliente.php';
                                 <option value="outro">Outro motivo</option>
                             </select>
                         </div>
-                        
+
                         <div class="mb-3" id="motivoOutroContainer" style="display: none;">
                             <label for="motivoOutro" class="form-label">Descreva o motivo</label>
-                            <textarea class="form-control" id="motivoOutro" name="motivo_outro" rows="3" 
-                                      placeholder="Explique o motivo do cancelamento..."></textarea>
+                            <textarea class="form-control" id="motivoOutro" name="motivo_outro" rows="3"
+                                placeholder="Explique o motivo do cancelamento..."></textarea>
                         </div>
-                        
+
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i>
                             <strong>O que acontece ao cancelar:</strong>
@@ -786,10 +788,102 @@ require_once 'menu-cliente.php';
             </div>
         </div>
     </div>
+    <!-- Modal Confirmar Aceitação (deixe fora de qualquer bloco PHP condicional) -->
+    <div class="modal fade" id="aceitarModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-check me-2"></i>
+                        Aceitar Proposta
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="aceitarForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="aceitarPropostaId" name="proposta_id">
+                        <div class="alert alert-success">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Tem certeza que deseja aceitar esta proposta? Todas as outras serão recusadas automaticamente.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check me-1"></i>
+                            Confirmar Aceitação
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Contra-Proposta -->
+    <div class="modal fade" id="contraPropostaModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exchange-alt me-2"></i>
+                        Fazer Contra-Proposta
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="contraPropostaForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="propostaId" name="proposta_id">
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Proposta Original:</strong><br>
+                            Valor: R$ <span id="valorOriginal"></span> | Prazo: <span id="prazoOriginal"></span> dia(s)
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="novoValor" class="form-label">Novo Valor *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <input type="number" class="form-control" id="novoValor" name="valor" step="0.01" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="novoPrazo" class="form-label">Novo Prazo *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="novoPrazo" name="prazo" required>
+                                    <span class="input-group-text">dia(s)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="observacoes" class="form-label">Observações</label>
+                            <textarea class="form-control" id="observacoes" name="observacoes" rows="3"
+                                placeholder="Explique o motivo da contra-proposta ou adicione observações..."></textarea>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Atenção:</strong> O prestador será notificado da sua contra-proposta e poderá aceitar, recusar ou fazer uma nova proposta.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-paper-plane me-1"></i>
+                            Enviar Contra-Proposta
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Filtros
@@ -842,7 +936,7 @@ require_once 'menu-cliente.php';
         function carregarTiposServico() {
             const tipos = new Set();
             const servicosCards = document.querySelectorAll('.servico-card');
-            
+
             servicosCards.forEach(card => {
                 const tipoElement = card.querySelector('.fa-tag');
                 if (tipoElement && tipoElement.nextElementSibling) {
@@ -850,7 +944,7 @@ require_once 'menu-cliente.php';
                     tipos.add(tipoTexto);
                 }
             });
-            
+
             const filtroTipo = document.getElementById('filtroTipo');
             tipos.forEach(tipo => {
                 const option = document.createElement('option');
@@ -861,9 +955,16 @@ require_once 'menu-cliente.php';
         }
 
         function verDetalhes(servicoId) {
-            // Carregar detalhes via AJAX
+            // Depuração: log para saber se está sendo chamado
+            console.log('Abrindo detalhes do serviço:', servicoId);
+
             fetch(`detalhes-servico.php?id=${servicoId}`)
-                .then(response => response.text())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao buscar detalhes');
+                    }
+                    return response.text();
+                })
                 .then(html => {
                     document.getElementById('detalhesContent').innerHTML = html;
                     new bootstrap.Modal(document.getElementById('detalhesModal')).show();
@@ -911,7 +1012,7 @@ require_once 'menu-cliente.php';
 
         function updateNotificationList(notificacoes) {
             const list = document.getElementById('notificationList');
-            
+
             if (notificacoes.length === 0) {
                 list.innerHTML = '<div class="dropdown-item-text text-center text-muted">Nenhuma notificação</div>';
                 return;
@@ -952,24 +1053,28 @@ require_once 'menu-cliente.php';
 
         function marcarComoLida(notifId, referencia) {
             fetch('../../api/mark-notification-read.php', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({notification_id: notifId})
-            })
-            .then(() => {
-                carregarNotificacoes();
-                if (referencia && referencia !== '#') {
-                    // Redirecionar para a referência se necessário
-                    // window.location.href = `detalhes-servico.php?id=${referencia}`;
-                }
-            });
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        notification_id: notifId
+                    })
+                })
+                .then(() => {
+                    carregarNotificacoes();
+                    if (referencia && referencia !== '#') {
+                        // Redirecionar para a referência se necessário
+                        // window.location.href = `detalhes-servico.php?id=${referencia}`;
+                    }
+                });
         }
 
         function marcarTodasLidas() {
             fetch('../../api/mark-all-notifications-read.php', {
-                method: 'POST'
-            })
-            .then(() => carregarNotificacoes());
+                    method: 'POST'
+                })
+                .then(() => carregarNotificacoes());
         }
 
         // Inicializar notificações
@@ -994,23 +1099,25 @@ require_once 'menu-cliente.php';
                     data: card.querySelector('.fa-calendar').parentNode.textContent,
                     tipo: card.querySelector('.fa-tag').parentNode.textContent
                 }));
-            
-            const csv = 'Título,Status,Data,Tipo\n' + 
-                       dados.map(d => `"${d.titulo}","${d.status}","${d.data}","${d.tipo}"`).join('\n');
-            
-            const blob = new Blob([csv], { type: 'text/csv' });
+
+            const csv = 'Título,Status,Data,Tipo\n' +
+                dados.map(d => `"${d.titulo}","${d.status}","${d.data}","${d.tipo}"`).join('\n');
+
+            const blob = new Blob([csv], {
+                type: 'text/csv'
+            });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = 'meus-servicos.csv';
             a.click();
         }
-        
+
         function mudarVista(tipo) {
             const container = document.getElementById('servicosContainer');
             const cards = document.querySelectorAll('.servico-card');
             const buttons = document.querySelectorAll('#vistaControls .btn');
-            
+
             // Atualizar botões ativos
             buttons.forEach(btn => {
                 btn.classList.remove('btn-primary');
@@ -1018,26 +1125,26 @@ require_once 'menu-cliente.php';
             });
             document.getElementById(`btn-${tipo}`).classList.remove('btn-outline-primary');
             document.getElementById(`btn-${tipo}`).classList.add('btn-primary');
-            
+
             // Remover classes anteriores
             container.classList.remove('vista-cards', 'vista-lista', 'vista-timeline', 'row');
-            
+
             cards.forEach(card => {
                 // Ocultar todos os templates
                 const templateCard = card.querySelector('.template-card');
                 const templateLista = card.querySelector('.template-lista');
                 const templateTimeline = card.querySelector('.template-timeline');
-                
+
                 templateCard.style.display = 'none';
                 templateLista.style.display = 'none';
                 templateTimeline.style.display = 'none';
-                
+
                 // Resetar classes da coluna
                 card.className = 'mb-4 servico-card ' + card.className.split(' ').filter(c => c.startsWith('data-')).join(' ');
             });
-            
+
             // Aplicar nova vista
-            switch(tipo) {
+            switch (tipo) {
                 case 'cards':
                     container.classList.add('row', 'vista-cards');
                     cards.forEach(card => {
@@ -1045,7 +1152,7 @@ require_once 'menu-cliente.php';
                         card.querySelector('.template-card').style.display = 'block';
                     });
                     break;
-                    
+
                 case 'lista':
                     container.classList.add('vista-lista');
                     cards.forEach(card => {
@@ -1053,7 +1160,7 @@ require_once 'menu-cliente.php';
                         card.querySelector('.template-lista').style.display = 'flex';
                     });
                     break;
-                    
+
                 case 'timeline':
                     container.classList.add('vista-timeline');
                     cards.forEach(card => {
@@ -1063,15 +1170,15 @@ require_once 'menu-cliente.php';
                     break;
             }
         }
-        
+
         function ordenarServicos(criterio, ordem) {
             const container = document.getElementById('servicosContainer');
             const cards = Array.from(container.querySelectorAll('.servico-card'));
-            
+
             cards.sort((a, b) => {
                 let valorA, valorB;
-                
-                switch(criterio) {
+
+                switch (criterio) {
                     case 'data':
                         valorA = parseInt(a.dataset.data);
                         valorB = parseInt(b.dataset.data);
@@ -1087,22 +1194,22 @@ require_once 'menu-cliente.php';
                     default:
                         return 0;
                 }
-                
+
                 return ordem === 'asc' ? valorA - valorB : valorB - valorA;
             });
-            
+
             // Reordenar no DOM
             cards.forEach(card => container.appendChild(card));
-            
+
             // Mostrar feedback
             const criterioTexto = {
                 'data': 'data',
                 'valor': 'valor',
                 'status': 'status'
             };
-            
+
             const ordemTexto = ordem === 'asc' ? 'crescente' : 'decrescente';
-            
+
             // Toast de feedback
             const toast = document.createElement('div');
             toast.className = 'toast align-items-center text-white bg-success border-0 position-fixed top-0 end-0 m-3';
@@ -1117,10 +1224,10 @@ require_once 'menu-cliente.php';
                 </div>
             `;
             document.body.appendChild(toast);
-            
+
             const bsToast = new bootstrap.Toast(toast);
             bsToast.show();
-            
+
             // Remover toast após ser ocultado
             toast.addEventListener('hidden.bs.toast', () => {
                 document.body.removeChild(toast);
@@ -1133,12 +1240,12 @@ require_once 'menu-cliente.php';
             document.getElementById('filtroDataInicio').value = '';
             document.getElementById('filtroDataFim').value = '';
             document.getElementById('buscarServico').value = '';
-            
+
             // Mostrar todos os cards
             document.querySelectorAll('.servico-card').forEach(card => {
                 card.style.display = 'block';
             });
-            
+
             // Toast de feedback
             const toast = document.createElement('div');
             toast.className = 'toast align-items-center text-white bg-info border-0 position-fixed top-0 end-0 m-3';
@@ -1153,10 +1260,10 @@ require_once 'menu-cliente.php';
                 </div>
             `;
             document.body.appendChild(toast);
-            
+
             const bsToast = new bootstrap.Toast(toast);
             bsToast.show();
-            
+
             toast.addEventListener('hidden.bs.toast', () => {
                 document.body.removeChild(toast);
             });
@@ -1196,80 +1303,135 @@ require_once 'menu-cliente.php';
             btnSubmit.disabled = true;
 
             fetch('gerenciar-servico.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    bootstrap.Modal.getOrCreateInstance(document.getElementById('cancelarModal')).hide();
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('cancelarModal')).hide();
 
-                    // Mostrar mensagem de sucesso
-                    const alertDiv = document.createElement('div');
-                    alertDiv.className = 'alert alert-success alert-dismissible fade show';
-                    alertDiv.innerHTML = `
+                        // Mostrar mensagem de sucesso
+                        const alertDiv = document.createElement('div');
+                        alertDiv.className = 'alert alert-success alert-dismissible fade show';
+                        alertDiv.innerHTML = `
                         <i class="fas fa-check-circle me-2"></i>
                         ${data.message}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     `;
-                    document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.container').firstChild);
+                        document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.container').firstChild);
 
-                    // Recarregar página após 2 segundos
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
-                } else {
-                    alert('Erro: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Erro:', error);
-                alert('Erro de conexão. Tente novamente.');
-            })
-            .finally(() => {
-                // Restaurar botão
-                btnSubmit.innerHTML = originalText;
-                btnSubmit.disabled = false;
-            });
+                        // Recarregar página após 2 segundos
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        alert('Erro: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro de conexão. Tente novamente.');
+                })
+                .finally(() => {
+                    // Restaurar botão
+                    btnSubmit.innerHTML = originalText;
+                    btnSubmit.disabled = false;
+                });
         });
 
-        function aceitarProposta(form, servicoId) {
-            if (event) event.preventDefault(); // Use 'event' do escopo global
-            const propostaId = form.querySelector('input[name="proposta_id"]').value;
+
+        function abrirContraProposta(propostaId, valorOriginal, prazoOriginal) {
+            document.getElementById('propostaId').value = propostaId;
+            document.getElementById('valorOriginal').textContent = new Intl.NumberFormat('pt-BR', {
+                minimumFractionDigits: 2
+            }).format(valorOriginal);
+            document.getElementById('prazoOriginal').textContent = prazoOriginal;
+
+            document.getElementById('novoValor').value = valorOriginal;
+            document.getElementById('novoPrazo').value = prazoOriginal;
+
+            // Abre o modal de contra-proposta
+            var modal = document.getElementById('contraPropostaModal');
+            bootstrap.Modal.getOrCreateInstance(modal).show();
+        }
+
+        // Enviar contra-proposta
+        document.getElementById('contraPropostaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const novoValor = parseFloat(document.getElementById('novoValor').value);
+            const novoPrazo = parseInt(document.getElementById('novoPrazo').value);
+
+            if (novoValor <= 0) {
+                alert('O valor deve ser maior que zero.');
+                return;
+            }
+
+            if (novoPrazo <= 0) {
+                alert('O prazo deve ser maior que zero.');
+                return;
+            }
+
+            const formData = new FormData(this);
+            formData.append('action', 'contra_proposta');
 
             fetch('gerenciar-proposta.php', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: `action=aceitar&proposta_id=${encodeURIComponent(propostaId)}`
-            })
-            .then(response => {
-                // Verifica se a resposta é JSON válida
-                if (!response.ok) throw new Error('Erro de rede');
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    const alertDiv = document.createElement('div');
-                    alertDiv.className = 'alert alert-success alert-dismissible fade show mt-3';
-                    alertDiv.innerHTML = `
-                        <i class="fas fa-check-circle me-2"></i>
-                        Proposta aceita com sucesso! O serviço está em execução.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    `;
-                    form.parentNode.insertBefore(alertDiv, form.nextSibling);
-                    setTimeout(() => { window.location.reload(); }, 1500);
-                } else {
-                    alert('Erro ao aceitar proposta: ' + (data.message || 'Tente novamente.'));
-                }
-            })
-            .catch((error) => {
-                alert('Erro de conexão ao aceitar proposta.');
-                console.error(error);
-            });
-            return false;
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('contraPropostaModal')).hide();
+                        alert('Contra-proposta enviada com sucesso!');
+                        window.location.reload();
+                    } else {
+                        alert('Erro: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro de conexão. Tente novamente.');
+                });
+        });
+
+        function recusarProposta(propostaId) {
+            document.getElementById('recusaPropostaId').value = propostaId;
+            var modal = document.getElementById('recusaModal');
+            bootstrap.Modal.getOrCreateInstance(modal).show();
         }
+
+        document.getElementById('recusaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            formData.append('action', 'recusar');
+
+            fetch('gerenciar-proposta.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('recusaModal')).hide();
+                        alert('Proposta recusada.');
+                        // Remover proposta da tela sem recarregar
+                        const propostaId = document.getElementById('recusaPropostaId').value;
+                        const propostaItem = document.querySelector(`.proposta-item[data-id="${propostaId}"]`);
+                        if (propostaItem) propostaItem.remove();
+                    } else {
+                        alert('Erro: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro de conexão. Tente novamente.');
+                });
+        });
     </script>
-    
+
     <!-- Moment.js para formatação de datas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/pt-br.min.js"></script>
@@ -1277,4 +1439,5 @@ require_once 'menu-cliente.php';
 <footer class="text-center text-muted py-3 mt-4">
     &copy; <?php echo date('Y'); ?> Chama Serviço. Todos os direitos reservados.
 </footer>
+
 </html>

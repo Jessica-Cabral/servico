@@ -16,14 +16,12 @@ $prestador = new Prestador();
 $servico = new Servico();
 $proposta = new Proposta();
 
+// Buscar dados completos do prestador (tb_pessoa)
 $prestador_id = $_SESSION['prestador_id'];
 $prestador_nome = $_SESSION['prestador_nome'] ?? 'Prestador';
-
-// Buscar dados completos do prestador (tb_pessoa)
 $prestador_dados = $prestador->getById($prestador_id);
 $prestador_email = $prestador_dados['email'] ?? '';
 $prestador_telefone = $prestador_dados['telefone'] ?? '';
-
 $stats = $prestador->getStats($prestador_id);
 $servicos_disponiveis = $servico->getDisponiveis(5);
 $minhas_propostas = $proposta->getByPrestador($prestador_id, 4);
@@ -153,7 +151,9 @@ $grafico_dados = $prestador->getGraficoDados($prestador_id);
                         <a class="nav-link" href="minhas-propostas.php"><i class="fas fa-handshake me-1"></i> Minhas Propostas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="meus-trabalhos.php"><i class="fas fa-briefcase me-1"></i> Meus Trabalhos</a>
+                        <a class="nav-link" href="https://wa.me/556134032081" target="_blank">
+                            <i class="fas fa-headset me-1"></i> Suporte
+                        </a>
                     </li>
                <li class="nav-item">
     <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#perfilModal">
@@ -419,9 +419,9 @@ $grafico_dados = $prestador->getGraficoDados($prestador_id);
                             </div>
                             <div class="col-md-3 mb-3">
                                 <div class="d-grid">
-                                    <a href="meus-trabalhos.php" class="btn btn-outline-info btn-lg">
-                                        <i class="fas fa-briefcase fa-2x mb-2"></i><br>
-                                        Meus Trabalhos
+                                    <a href="https://wa.me/556134032081" target="_blank" class="btn btn-outline-warning btn-lg">
+                                        <i class="fas fa-headset fa-2x mb-2"></i><br>
+                                        Suporte
                                     </a>
                                 </div>
                             </div>

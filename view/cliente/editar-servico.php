@@ -284,3 +284,13 @@ if ($_POST) {
     </script>
 </body>
 </html>
+
+<?php
+// View para edição de serviço do cliente (MVC)
+
+// Recupera dados do serviço para edição
+
+// Exibe formulário para editar serviço
+
+// Scripts JS para interatividade do formulário
+?>

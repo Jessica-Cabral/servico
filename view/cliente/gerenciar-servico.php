@@ -1,4 +1,5 @@
 <?php
+// Endpoint AJAX para gerenciar serviços (MVC)
 session_start();
 header('Content-Type: application/json');
 
@@ -19,6 +20,7 @@ $action = $_POST['action'] ?? '';
 
 try {
     switch ($action) {
+        // Processa ação de cancelamento de serviço
         case 'cancelar':
             $servico_id = $_POST['servico_id'];
             $motivo = $_POST['motivo'] ?? '';

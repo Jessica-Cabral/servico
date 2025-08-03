@@ -15,7 +15,7 @@ class Proposta {
             $query = "SELECT p.*, ps.nome as prestador_nome
                       FROM " . $this->table . " p
                       INNER JOIN tb_pessoa ps ON p.prestador_id = ps.id
-                      WHERE p.solicitacao_id = :servico_id 
+                      WHERE p.solicitacao_id = :servico_id AND p.status != 'recusada'
                       ORDER BY p.data_proposta DESC";
             
             $stmt = $this->conn->prepare($query);

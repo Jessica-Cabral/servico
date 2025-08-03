@@ -1,4 +1,5 @@
 <?php
+// View para solicitação de novo serviço (MVC)
 session_start();
 
 if (!isset($_SESSION['cliente_id'])) {

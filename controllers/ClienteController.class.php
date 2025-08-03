@@ -1,18 +1,24 @@
 <?php
+// Controller responsável pelas ações do cliente (MVC)
 
 require_once __DIR__ . '/../models/Cliente.class.php';
 require_once __DIR__ . '/../models/Servico.class.php';
 
-class ClienteController {
+class ClienteController
+{
     private $cliente;
     private $servico;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->cliente = new Cliente();
+
         $this->servico = new Servico();
     }
 
-    public function dashboard() {
+    public function dashboard()
+    {
+        // Exibe o dashboard do cliente
         if (session_status() === PHP_SESSION_NONE) session_start();
         if (empty($_SESSION['cliente_id'])) {
             header('Location: ../Login.php');
@@ -20,14 +26,25 @@ class ClienteController {
         }
 
         $cliente_id = $_SESSION['cliente_id'];
-        $stats = $this->cliente->getStats($cliente_id);
-        $servicos_recentes = $this->servico->getRecentes($cliente_id, 5);
-        $grafico_dados = $this->servico->getGraficoDados($cliente_id);
+        $cliente_nome = $_SESSION['cliente_nome'] ?? 'Cliente';
+        $cliente_foto = $_SESSION['cliente_foto'] ?? null;
 
-        include __DIR__ . '/../views/cliente/dashboard.php';
+        $stats = $this->cliente->getStats($cliente_id);
+        $servicos_recentes = $this->servico->getRecentes($cliente_id, 4);
+        $grafico_dados = $this->servico->getGraficoDados($cliente_id);
+        $dados_cliente = $this->cliente->getById($cliente_id);
+
+        // Adicionais para evitar warning na view
+        $cliente_email = $dados_cliente['email'] ?? '';
+        $cliente_telefone = $dados_cliente['telefone'] ?? '';
+
+        // Inclui a view, as variáveis acima estarão disponíveis nela
+        include __DIR__ . '/../view/cliente/clienteDashboard.php';
     }
 
-    public function novoServico() {
+    public function novoServico()
+    {
+        // Exibe formulário para novo serviço e processa criação
         if (session_status() === PHP_SESSION_NONE) session_start();
         if (empty($_SESSION['cliente_id'])) {
             header('Location: ../Login.php');
@@ -54,7 +71,9 @@ class ClienteController {
         include __DIR__ . '/../views/cliente/novo-servico.php';
     }
 
-    public function meusServicos() {
+    public function meusServicos()
+    {
+        // Lista serviços do cliente
         if (session_status() === PHP_SESSION_NONE) session_start();
         if (empty($_SESSION['cliente_id'])) {
             header('Location: ../Login.php');
@@ -67,7 +86,9 @@ class ClienteController {
         include __DIR__ . '/../views/cliente/meus-servicos.php';
     }
 
-    public function atualizarPerfil() {
+    public function atualizarPerfil()
+    {
+        // Atualiza dados do perfil do cliente
         if (session_status() === PHP_SESSION_NONE) session_start();
         if (empty($_SESSION['cliente_id'])) {
             header('Location: ../Login.php');
@@ -133,7 +154,9 @@ class ClienteController {
         exit();
     }
 
-    public function cadastrarCliente($nome, $email, $senha) {
+    public function cadastrarCliente($nome, $email, $senha)
+    {
+        // Cadastra novo cliente
         // Aqui você pode adicionar validações extras se desejar
         $cliente = new Cliente();
         // Adapte conforme o construtor e métodos do seu model
@@ -147,4 +170,3 @@ class ClienteController {
         return $cliente->create($dados);
     }
 }
-?>

@@ -1,24 +1,28 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
 
-class Cliente {
+// Model responsável pelos dados do cliente (MVC)
+class Cliente
+{
     private $conn;
     private $table = 'tb_pessoa';
-
     public $id;
     public $nome;
     public $email;
     public $senha;
     public $tipo;
 
-    public function __construct() {
+    public function __construct()
+    {
         $database = new Database();
         $this->conn = $database->getConnection();
     }
 
-    public function getStats($cliente_id) {
+    public function getStats($cliente_id)
+    {
+        // Retorna estatísticas dos serviços do cliente
         $stats = [];
-        
+
         try {
             // Serviços ativos (aguardando propostas, em análise, proposta aceita, em andamento)
             $query = "SELECT COUNT(*) as total FROM tb_solicita_servico 
@@ -54,7 +58,6 @@ class Cliente {
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $stats['total_gasto'] = $result['total'] ?? 0;
-
         } catch (Exception $e) {
             // Em caso de erro, retornar zeros
             $stats = [
@@ -68,18 +71,35 @@ class Cliente {
         return $stats;
     }
 
-    public function getById($id) {
+    public function getById($id)
+    {
+        // Busca dados do cliente por ID
         try {
             $stmt = $this->conn->prepare("SELECT * FROM tb_pessoa WHERE id = ? LIMIT 1");
             $stmt->execute([$id]);
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Buscar endereço completo do cliente (caso esteja em outra tabela)
+            if ($dados && isset($dados['id'])) {
+                // Exemplo: supondo que o endereço está em tb_endereco_cliente
+                $stmtEnd = $this->conn->prepare("SELECT cep, endereco, numero, bairro, cidade, uf FROM tb_endereco_cliente WHERE cliente_id = ? LIMIT 1");
+                $stmtEnd->execute([$dados['id']]);
+                $endereco = $stmtEnd->fetch(PDO::FETCH_ASSOC);
+                if ($endereco) {
+                    $dados = array_merge($dados, $endereco);
+                }
+            }
+
+            return $dados ?: null;
         } catch (Exception $e) {
             error_log("Erro ao buscar cliente por ID: " . $e->getMessage());
             return false;
         }
     }
 
-    public function atualizar($id, $dados) {
+    public function atualizar($id, $dados)
+    {
+        // Atualiza dados do cliente
         try {
             $campos = [];
             $params = [];
@@ -120,7 +140,9 @@ class Cliente {
         }
     }
 
-    public function create($dados) {
+    public function create($dados)
+    {
+        // Cria novo cliente
         try {
             $sql = "INSERT INTO tb_pessoa (nome, email, senha, tipo) VALUES (:nome, :email, :senha, :tipo)";
             $stmt = $this->conn->prepare($sql);
@@ -134,5 +156,3 @@ class Cliente {
         }
     }
 }
-?>
-

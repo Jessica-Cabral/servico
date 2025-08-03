@@ -15,9 +15,15 @@ $user_id = $_SESSION['cliente_id'] ?? $_SESSION['prestador_id'];
 $user_type = $_SESSION['user_type'] ?? 'cliente';
 
 try {
+    // Log para depuração
+    file_put_contents(__DIR__ . '/debug_notifications.txt', date('Y-m-d H:i:s') . " - user_id: $user_id, user_type: $user_type\n", FILE_APPEND);
+
     // Buscar notificações não lidas
     $notificacoes = $notificacao->getNaoLidas($user_id, $user_type);
     $total = $notificacao->contarNaoLidas($user_id, $user_type);
+
+    // Log resultado
+    file_put_contents(__DIR__ . '/debug_notifications.txt', print_r(['notificacoes' => $notificacoes, 'total' => $total], true), FILE_APPEND);
 
     echo json_encode([
         'success' => true,
@@ -33,18 +39,3 @@ try {
     ]);
 }
 ?>
-
-<script>
-// Adicionar ao final dos arquivos de dashboard
-setInterval(function() {
-    fetch('../../api/notifications.php')
-        .then(response => response.json())
-        .then(data => {
-            if (data.total > 0) {
-                // Atualizar interface com notificações
-                updateNotificationBadge(data.total);
-            }
-        })
-        .catch(console.error);
-}, 30000); // Verificar a cada 30 segundos
-</script>

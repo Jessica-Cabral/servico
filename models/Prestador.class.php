@@ -194,17 +194,24 @@ class Prestador {
      * @return array
      */
     public function getRecomendadosPorTipo($tipo_servico_id, $limite = 3) {
-        $sql = "SELECT p.id, p.nome, p.avaliacao, p.total_avaliacoes
-                FROM prestadores p
-                INNER JOIN prestador_servico ps ON ps.prestador_id = p.id
-                WHERE ps.tipo_servico_id = :tipo
-                ORDER BY p.avaliacao DESC, p.total_avaliacoes DESC
-                LIMIT :limite";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(':tipo', $tipo_servico_id, PDO::PARAM_INT);
-        $stmt->bindValue(':limite', $limite, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $query = "SELECT p.id, p.nome, p.avaliacao, p.total_avaliacoes
+                      FROM tb_pessoa p
+                      INNER JOIN tb_prestador_servico ps ON p.id = ps.prestador_id
+                      WHERE ps.tipo_servico_id = :tipo_servico_id
+                      AND p.tipo = 'prestador'
+                      ORDER BY p.avaliacao DESC
+                      LIMIT ?";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindValue(':tipo_servico_id', $tipo_servico_id, PDO::PARAM_INT);
+            $stmt->bindValue(1, $limite, PDO::PARAM_INT); // LIMIT como parâmetro posicional
+            $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log("Erro ao buscar prestadores recomendados: " . $e->getMessage());
+            return [];
+        }
     }
 
     public function create($dados) {
@@ -220,5 +227,7 @@ class Prestador {
             return false;
         }
     }
+}
+?>
 }
 ?>

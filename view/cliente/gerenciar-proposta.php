@@ -1,4 +1,6 @@
 <?php
+// Endpoint AJAX para gerenciar propostas (MVC)
+
 session_start();
 header('Content-Type: application/json');
 
@@ -7,7 +9,7 @@ if (!isset($_SESSION['cliente_id'])) {
     exit();
 }
 
-require_once __DIR__ . '/../../models/Proposta.php';
+require_once __DIR__ . '/../../models/Proposta.class.php';
 require_once __DIR__ . '/../../models/Servico.php';
 require_once __DIR__ . '/../../models/Notificacao.php';
 
@@ -18,7 +20,14 @@ $notificacao = new Notificacao();
 $input = json_decode(file_get_contents('php://input'), true);
 $action = $input['action'] ?? $_POST['action'] ?? '';
 
+// Adicione log para depuração
+file_put_contents(__DIR__ . '/debug_gerenciar_proposta.txt', print_r([
+    'POST' => $_POST,
+    'INPUT' => file_get_contents('php://input')
+], true), FILE_APPEND);
+
 try {
+    // Processa ações: aceitar, contra-proposta, recusar
     switch ($action) {
         case 'aceitar':
             $proposta_id = $input['proposta_id'] ?? $_POST['proposta_id'];
