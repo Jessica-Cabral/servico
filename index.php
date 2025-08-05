@@ -33,5 +33,5 @@ if (isset($_SESSION['user_type'])) {
 }
 
 // Se não estiver logado, redireciona para login
-header('Location: login.php');
+header('Location: Login.php');
 exit();

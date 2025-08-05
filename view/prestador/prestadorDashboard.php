@@ -660,8 +660,3 @@ $grafico_dados = $prestador->getGraficoDados($prestador_id);
 
 </html>
 
-</html>
-
-</html>
-
-</html>
