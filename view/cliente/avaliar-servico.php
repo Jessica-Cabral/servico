@@ -11,8 +11,9 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
-require_once __DIR__ . '/models/Servico.php';
-require_once __DIR__ . '/models/Avaliacao.php';
+// Corrija o caminho dos Models
+require_once __DIR__ . '/../../models/Servico.class.php';
+require_once __DIR__ . '/../../models/Avaliacao.php';
 
 $servico = new Servico();
 $avaliacao = new Avaliacao();
@@ -195,6 +196,34 @@ if ($_POST) {
                         <?php endif; ?>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5><i class="fas fa-star me-2"></i>Avaliar Serviço</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="nota" class="form-label">Nota (1 a 5)</label>
+                        <select class="form-select" id="nota" name="nota" required>
+                            <option value="">Selecione</option>
+                            <?php for ($i=1; $i<=5; $i++): ?>
+                                <option value="<?php echo $i; ?>"><?php echo $i; ?> estrela(s)</option>
+                            <?php endfor; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comentario" class="form-label">Comentário</label>
+                        <textarea class="form-control" id="comentario" name="comentario" rows="4" placeholder="Descreva sua experiência..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-paper-plane me-1"></i>Enviar Avaliação
+                    </button>
+                </form>
             </div>
         </div>
     </div>

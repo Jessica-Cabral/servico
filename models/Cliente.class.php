@@ -97,6 +97,18 @@ class Cliente
         }
     }
 
+    public function getByCpf($cpf)
+    {
+        // Busca dados do cliente por CPF
+        try {
+            $stmt = $this->conn->prepare("SELECT * FROM tb_pessoa WHERE cpf = ? LIMIT 1");
+            $stmt->execute([$cpf]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
     public function atualizar($id, $dados)
     {
         // Atualiza dados do cliente
@@ -144,15 +156,19 @@ class Cliente
     {
         // Cria novo cliente
         try {
-            $sql = "INSERT INTO tb_pessoa (nome, email, senha, tipo) VALUES (:nome, :email, :senha, :tipo)";
+            $sql = "INSERT INTO tb_pessoa (nome, email, senha, tipo, telefone, data_nascimento) 
+                    VALUES (:nome, :email, :senha, :tipo, :telefone, :data_nascimento)";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindValue(':nome', $dados['nome']);
             $stmt->bindValue(':email', $dados['email']);
             $stmt->bindValue(':senha', $dados['senha']);
             $stmt->bindValue(':tipo', $dados['tipo']);
+            $stmt->bindValue(':telefone', $dados['telefone']);
+            $stmt->bindValue(':data_nascimento', $dados['data_nascimento']);
             return $stmt->execute();
         } catch (Exception $e) {
             return false;
         }
-    }
+    
+}
 }

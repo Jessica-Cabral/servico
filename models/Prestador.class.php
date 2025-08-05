@@ -13,9 +13,7 @@ class Prestador {
         try {
             // Trabalhos ativos (status 3 e 4)
             $query = "SELECT COUNT(*) as total FROM tb_solicita_servico s
-                      INNER JOIN tb_proposta p ON s.id = p.solicitacao_id
-                      WHERE p.prestador_id = :prestador_id AND p.status = 'aceita'
-                      AND s.status_id IN (3, 4)";
+                      WHERE s.prestador_id = :prestador_id AND s.status_id IN (3, 4)";
             $stmt = $this->conn->prepare($query);
             $stmt->bindValue(':prestador_id', $prestador_id);
             $stmt->execute();
@@ -30,19 +28,16 @@ class Prestador {
 
             // Trabalhos concluídos
             $query = "SELECT COUNT(*) as total FROM tb_solicita_servico s
-                      INNER JOIN tb_proposta p ON s.id = p.solicitacao_id
-                      WHERE p.prestador_id = :prestador_id AND p.status = 'aceita'
-                      AND s.status_id = 5";
+                      WHERE s.prestador_id = :prestador_id AND s.status_id = 5";
             $stmt = $this->conn->prepare($query);
             $stmt->bindValue(':prestador_id', $prestador_id);
             $stmt->execute();
             $trabalhos_concluidos = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
             // Total ganho (simulado - seria necessário ter uma tabela de pagamentos)
-            $query = "SELECT COALESCE(SUM(p.valor), 0) as total FROM tb_solicita_servico s
-                      INNER JOIN tb_proposta p ON s.id = p.solicitacao_id
-                      WHERE p.prestador_id = :prestador_id AND p.status = 'aceita'
-                      AND s.status_id = 5";
+            $query = "SELECT COALESCE(SUM(p.valor), 0) as total FROM tb_proposta p
+                      INNER JOIN tb_solicita_servico s ON s.id = p.solicitacao_id
+                      WHERE p.prestador_id = :prestador_id AND s.status_id = 5 AND p.status = 'aceita'";
             $stmt = $this->conn->prepare($query);
             $stmt->bindValue(':prestador_id', $prestador_id);
             $stmt->execute();
@@ -67,47 +62,31 @@ class Prestador {
 
     public function getGraficoDados($prestador_id) {
         try {
-            $query = "SELECT 
-                        MONTH(s.data_solicitacao) as mes,
-                        YEAR(s.data_solicitacao) as ano,
-                        COUNT(*) as total
+            // Exemplo de gráfico: serviços concluídos por mês
+            $query = "SELECT DATE_FORMAT(s.data_solicitacao, '%Y-%m') as mes, COUNT(*) as total
                       FROM tb_solicita_servico s
-                      INNER JOIN tb_proposta p ON s.id = p.solicitacao_id
-                      WHERE p.prestador_id = :prestador_id AND p.status = 'aceita'
-                        AND s.data_solicitacao >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-                      GROUP BY YEAR(s.data_solicitacao), MONTH(s.data_solicitacao)
-                      ORDER BY ano, mes";
-            
+                      WHERE s.prestador_id = :prestador_id AND s.status_id = 5
+                      GROUP BY mes
+                      ORDER BY mes ASC";
             $stmt = $this->conn->prepare($query);
             $stmt->bindValue(':prestador_id', $prestador_id);
             $stmt->execute();
-            
             $dados = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            $meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            $resultado = [
-                'labels' => [],
-                'dados' => []
-            ];
-            
+
+            $labels = [];
+            $totais = [];
             foreach ($dados as $item) {
-                $resultado['labels'][] = $meses[$item['mes'] - 1];
-                $resultado['dados'][] = $item['total'];
+                $labels[] = $item['mes'];
+                $totais[] = $item['total'];
             }
-            
-            if (empty($resultado['labels'])) {
-                $resultado = [
-                    'labels' => ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
-                    'dados' => [1, 3, 2, 5, 3, 4]
-                ];
-            }
-            
-            return $resultado;
-            
+            return [
+                'labels' => $labels,
+                'dados' => $totais
+            ];
         } catch (Exception $e) {
             return [
-                'labels' => ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
-                'dados' => [1, 3, 2, 5, 3, 4]
+                'labels' => [],
+                'dados' => []
             ];
         }
     }
@@ -164,10 +143,11 @@ class Prestador {
                 $params[':senha'] = $dados['senha'];
             }
             if (empty($campos)) return false;
+
             $sql = "UPDATE tb_pessoa SET " . implode(', ', $campos) . " WHERE id = :id";
             $stmt = $this->conn->prepare($sql);
-            foreach ($params as $k => $v) {
-                $stmt->bindValue($k, $v);
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key, $value);
             }
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             return $stmt->execute();
@@ -227,7 +207,17 @@ class Prestador {
             return false;
         }
     }
-}
-?>
+
+    public function getByEmail($email) {
+        try {
+            $query = "SELECT * FROM tb_pessoa WHERE email = :email LIMIT 1";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindValue(':email', $email);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            return null;
+        }
+    }
 }
 ?>

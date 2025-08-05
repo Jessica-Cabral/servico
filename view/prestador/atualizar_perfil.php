@@ -73,21 +73,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Location: prestadorDashboard.php');
     exit;
 }
-
-// Exemplo de bloco para edição de cadastro com upload de foto
 ?>
-<p class="form-title">*Edite o seu Cadastro</p>
-<div class="mb-3">
-  <form action="index.php" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="id_pessoa" value="<?php echo htmlspecialchars($prestador_dados['id'] ?? ''); ?>">
-    <img src="<?php
-      $foto_perfil = !empty($prestador_dados['foto_perfil']) ? $prestador_dados['foto_perfil'] : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-      if (!preg_match('/^https?:\/\//', $foto_perfil)) {
-          $foto_perfil = '/' . ltrim($foto_perfil, '/');
-      }
-      echo htmlspecialchars($foto_perfil);
-    ?>" alt="Foto do Perfil" class="perfil-img" style="width:120px;height:120px;object-fit:cover;border-radius:50%;border:2px solid #ffc107;">
-    <input class="form-control mt-2" type="file" id="imagem" name="foto_perfil" accept="image/*">
-  </form>
+
+
+<div class="container mt-4 mb-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <p class="form-title text-center">*Edite o seu Cadastro</p>
+                    <form action="atualizar_perfil.php" method="post" enctype="multipart/form-data" id="formPerfil">
+                        <input type="hidden" name="id" value="<?php echo htmlspecialchars($prestador_dados['id'] ?? ''); ?>">
+                        <div class="text-center mb-3">
+                            <img src="<?php
+                                $foto_perfil = !empty($prestador_dados['foto_perfil']) ? $prestador_dados['foto_perfil'] : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                                if (!preg_match('/^https?:\/\//', $foto_perfil)) {
+                                    $foto_perfil = '/' . ltrim($foto_perfil, '/');
+                                }
+                                echo htmlspecialchars($foto_perfil);
+                            ?>" alt="Foto do Perfil" class="perfil-img mb-2">
+                            <div class="input-group mt-2">
+                                <label class="input-group-text" for="foto_perfil"><i class="fas fa-camera"></i></label>
+                                <input class="form-control" type="file" id="foto_perfil" name="foto_perfil" accept="image/*">
+                            </div>
+                            <small id="fileName" class="text-muted"></small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="nome" name="nome" value="<?php echo htmlspecialchars($prestador_dados['nome'] ?? ''); ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($prestador_dados['email'] ?? ''); ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telefone" class="form-label">Telefone</label>
+                            <input type="text" class="form-control" id="telefone" name="telefone" value="<?php echo htmlspecialchars($prestador_dados['telefone'] ?? ''); ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="senha" class="form-label">Nova Senha</label>
+                            <input type="password" class="form-control" id="senha" name="senha" minlength="6" autocomplete="new-password">
+                            <small class="form-text text-muted">Preencha apenas se desejar alterar a senha (mínimo 6 caracteres).</small>
+                        </div>
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-custom btn-custom-primary">
+                                <i class="fas fa-save me-1"></i> Salvar Alterações
+                            </button>
+                            <a href="prestadorDashboard.php" class="btn btn-custom btn-custom-accent">
+                                <i class="fas fa-arrow-left me-1"></i> Voltar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<?php
+<script>
+// Visualização do nome do arquivo selecionado
+document.getElementById('foto_perfil').addEventListener('change', function(e) {
+    const fileName = e.target.files[0] ? e.target.files[0].name : '';
+    document.getElementById('fileName').textContent = fileName ? 'Selecionado: ' + fileName : '';
+});
+
+// Validação de senha no cliente
+document.getElementById('formPerfil').addEventListener('submit', function(e) {
+    const senha = document.getElementById('senha').value;
+    if (senha && senha.length < 6) {
+        e.preventDefault();
+        alert('A senha deve ter pelo menos 6 caracteres.');
+        document.getElementById('senha').focus();
+    }
+});
+</script>

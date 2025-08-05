@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/controllers/ControllerLogin.class.php';
-require_once __DIR__ . '/controllers/Controller.class.php';
 require_once __DIR__ . '/controllers/ClienteController.class.php';
 
 $url = explode('?', $_SERVER['REQUEST_URI']);
@@ -11,7 +10,7 @@ if ($pagina) {
     $objController->redirecionar($pagina);
 }
 
-##ROTAS DE AÇÃO
+// ROTAS DE AÇÃO
 if (isset($_POST['Login'])) {
     $objController = new ControllerLogin();
     $email = htmlspecialchars($_POST['email']);
@@ -19,27 +18,34 @@ if (isset($_POST['Login'])) {
     $objController->validar($email, $senha);
 }
 
-// As rotas abaixo usam Controller, mas não há require para ela. Adicione se necessário:
-if (
-    isset($_POST['validarAdmin']) ||
-    isset($_POST['abrirHomepage']) ||
-    isset($_POST['recuperarSenha']) ||
-    isset($_POST['abrirformpessoa']) ||
-    isset($_POST['cadastrar_pessoa']) ||
-    isset($_POST['cadastrar_servico']) ||
-    isset($_POST['consultar_pessoa']) ||
-    isset($_POST['botao_alterar_pessoa']) ||
-    isset($_POST['excluir_pessoa']) ||
+if (isset($_GET['pagina']) && $_GET['pagina'] === 'dashboard') {
+    $controller = new ClienteController();
+    $controller->dashboard();
+    exit();
+}
+
+if (isset($_GET['pagina']) && $_GET['pagina'] === 'avaliar-servico' && isset($_GET['id'])) {
+    $controller = new ClienteController();
+    $controller->avaliarServico($_GET['id']);
+    exit();
+}
+
+isset($_POST['excluir_pessoa']) ||
     isset($_POST['alterar_pessoa_admin']) ||
     isset($_POST['consultar_pessoa_admin']) ||
     isset($_POST['excluir_pessoa_admin']) ||
     isset($_POST['alterar_prestador_admin']) ||
     isset($_POST['consultar_prestador_admin']) ||
-    isset($_POST['excluir_prestador_admin'])
-);
+    isset($_POST['excluir_prestador_admin']);
 
 if (isset($_GET['pagina']) && $_GET['pagina'] === 'dashboard') {
     $controller = new ClienteController();
     $controller->dashboard();
+    exit();
+}
+
+if (isset($_GET['pagina']) && $_GET['pagina'] === 'avaliar-servico' && isset($_GET['id'])) {
+    $controller = new ClienteController();
+    $controller->avaliarServico($_GET['id']);
     exit();
 }

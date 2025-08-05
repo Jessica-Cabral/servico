@@ -10,7 +10,7 @@ if (!isset($_SESSION['cliente_id'])) {
 }
 
 require_once __DIR__ . '/../../models/Proposta.class.php';
-require_once __DIR__ . '/../../models/Servico.php';
+require_once __DIR__ . '/../../models/Servico.class.php';
 require_once __DIR__ . '/../../models/Notificacao.php';
 
 $proposta = new Proposta();
@@ -53,8 +53,8 @@ try {
                     $detalhes_proposta['solicitacao_id'], 
                     $servico_detalhes['titulo']
                 );
-                // Atualiza status do serviço para "Serviço em execução" (id 4)
-                $servico->atualizarStatus($detalhes_proposta['solicitacao_id'], 4);
+                // Atualiza status do serviço para "Proposta Aceita" (id 3)
+                $servico->atualizarStatus($detalhes_proposta['solicitacao_id'], 3);
                 echo json_encode(['success' => true, 'message' => 'Proposta aceita com sucesso!']);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Erro ao aceitar proposta.']);

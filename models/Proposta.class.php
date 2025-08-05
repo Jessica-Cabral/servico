@@ -351,5 +351,17 @@ class Proposta {
             ];
         }
     }
+
+    public function cancelar($id, $motivo = '') {
+        try {
+            $query = "UPDATE tb_proposta SET status = 'cancelada' WHERE id = :id AND status = 'pendente'";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (Exception $e) {
+            return false;
+        }
+    }
 }
+?>
 ?>

@@ -303,18 +303,18 @@ $stats_propostas = $proposta->getStatsPropostas($prestador_id);
                             
                             <div class="card-footer bg-transparent">
                                 <div class="d-flex flex-wrap gap-2">
-                                    <button class="btn btn-outline-info btn-sm" onclick="verDetalhesServico(<?php echo $item['solicitacao_id']; ?>)">
+                                    <button class="btn btn-outline-info btn-sm" onclick="abrirModal('ver', <?php echo $item['solicitacao_id']; ?>)">
                                         <i class="fas fa-eye me-1"></i>
                                         Ver Serviço
                                     </button>
                                     
                                     <?php if ($item['status'] == 'pendente'): ?>
-                                        <button class="btn btn-warning btn-sm" onclick="editarProposta(<?php echo $item['id']; ?>)">
+                                        <button class="btn btn-warning btn-sm" onclick="abrirModal('editar', <?php echo $item['id']; ?>)">
                                             <i class="fas fa-edit me-1"></i>
                                             Editar
                                         </button>
                                         
-                                        <button class="btn btn-outline-danger btn-sm" onclick="cancelarProposta(<?php echo $item['id']; ?>)">
+                                        <button class="btn btn-outline-danger btn-sm" onclick="abrirModal('cancelar', <?php echo $item['id']; ?>)">
                                             <i class="fas fa-times me-1"></i>
                                             Cancelar
                                         </button>
@@ -333,29 +333,93 @@ $stats_propostas = $proposta->getStatsPropostas($prestador_id);
         <?php endif; ?>
     </div>
 
+    <!-- Modal genérica para ações -->
+    <div class="modal fade" id="acaoModal" tabindex="-1" aria-labelledby="acaoModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="acaoModalLabel">Ação</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body" id="acaoModalConteudo">
+            <!-- Conteúdo dinâmico -->
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        function verDetalhesServico(servicoId) {
-            window.open(`../cliente/detalhes-servico.php?id=${servicoId}`, '_blank');
-        }
+        function abrirModal(tipo, id) {
+            let url = '';
+            let titulo = '';
+            let spinner = `<div class="d-flex justify-content-center align-items-center" style="height:120px;">
+                <div class="spinner-border text-info" role="status"><span class="visually-hidden">Carregando...</span></div>
+            </div>`;
+            document.getElementById('acaoModalConteudo').innerHTML = spinner;
 
-        function editarProposta(propostaId) {
-            // Implementar modal de edição
-            alert(`Editar proposta ${propostaId} - A implementar`);
-        }
-
-        function cancelarProposta(propostaId) {
-            if (confirm('Tem certeza que deseja cancelar esta proposta?')) {
-                // Implementar cancelamento
-                alert(`Cancelar proposta ${propostaId} - A implementar`);
+            if (tipo === 'ver') {
+                url = 'detalhes-oportunidade.php?id=' + id;
+                titulo = 'Detalhes do Serviço';
+            } else if (tipo === 'editar') {
+                url = 'editar-proposta.php?id=' + id;
+                titulo = 'Editar Proposta';
+            } else if (tipo === 'cancelar') {
+                url = 'cancelar-proposta.php?id=' + id;
+                titulo = 'Cancelar Proposta';
             }
+            document.getElementById('acaoModalLabel').innerText = titulo;
+
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('acaoModalConteudo').innerHTML = html;
+                    new bootstrap.Modal(document.getElementById('acaoModal')).show();
+                })
+                .catch(() => {
+                    document.getElementById('acaoModalConteudo').innerHTML = '<div class="alert alert-danger">Erro ao carregar conteúdo.</div>';
+                    new bootstrap.Modal(document.getElementById('acaoModal')).show();
+                });
         }
 
         function iniciarTrabalho(propostaId) {
             window.location.href = `iniciar-trabalho.php?proposta=${propostaId}`;
         }
+
+        // Delegação de evento para botão "Confirmar Cancelamento" dentro do modal
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'btnConfirmarCancelamento') {
+                const btn = e.target;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Cancelando...';
+                const id = btn.getAttribute('data-id');
+                // Captura o motivo do cancelamento do campo do modal
+                const motivoInput = document.getElementById('motivoCancelamento');
+                const motivo = motivoInput ? motivoInput.value : '';
+                fetch('cancelar-proposta-acao.php?id=' + id, {
+                    method: 'POST',
+                    body: new URLSearchParams({ motivo: motivo })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sucesso) {
+                        document.getElementById('cancelarStatus').innerHTML = '<div class="alert alert-success">Proposta cancelada com sucesso!</div>';
+                        setTimeout(() => { location.reload(); }, 1200);
+                    } else {
+                        document.getElementById('cancelarStatus').innerHTML = '<div class="alert alert-danger">Erro ao cancelar proposta.</div>';
+                        btn.disabled = false;
+                        btn.innerHTML = 'Confirmar Cancelamento';
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('cancelarStatus').innerHTML = '<div class="alert alert-danger">Erro de comunicação.</div>';
+                    btn.disabled = false;
+                    btn.innerHTML = 'Confirmar Cancelamento';
+                });
+            }
+        });
     </script>
 </body>
 </html>

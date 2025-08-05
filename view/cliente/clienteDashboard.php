@@ -373,7 +373,8 @@ require_once 'menu-cliente.php';
                             </div>
                             <div class="col-md-3 mb-3">
                                 <div class="d-grid">
-                                    <button class="btn btn-outline-success btn-lg">
+                                    <button class="btn btn-outline-success btn-lg"
+                                        onclick="window.location.href='meus-servicos.php?filtroStatus=5'">
                                         <i class="fas fa-star fa-2x mb-2"></i><br>
                                         Avaliar Serviço
                                     </button>

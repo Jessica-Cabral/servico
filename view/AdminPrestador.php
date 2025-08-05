@@ -57,10 +57,8 @@
                     print '  <td>' . $valor->data_nascimento . '</td>';
                     print '  <td>' . $valor->telefone . '</td>';
                     print '  <td>' . $valor->email . '</td>';                                               
-                    $statusClass = ($valor->status == 'ativo') ? 'text-success' : (($valor->status == 'inativo') ? 'text-danger' : '');
+                    $statusClass = ($valor->status == 'Ativo') ? 'text-success' : (($valor->status == 'Inativo') ? 'text-danger' : '');
                     print '  <td class="' . $statusClass . '">' . $valor->status . '</td>';
-                   
-
                     print '  <td>
                                 <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#alterar_prestador_admin' . $valor->id_pessoa . '"><i class="bi bi-pencil-square"></i> Alterar</button>
                                 <button type="button" class="btn btn-danger"  data-bs-toggle="modal" data-bs-target="#excluir_prestador' . $valor->id_pessoa . '"><i class="bi bi-x-square-fill"></i> Excluir</button>
@@ -75,7 +73,7 @@
     <?php
         //criar os Modal de excluir
         foreach ($resultado as $key => $valor) {
-            $this->modal_excluir_prestador_admin($valor->id_prestador, $valor->nome);
+            $this->modal_excluir_prestador_admin($valor->id_pessoa, $valor->nome);
         }
     ?>
 
@@ -85,11 +83,11 @@
             $this->modal_alterar_prestador_admin(
                 $valor->id_pessoa, 
                 $valor->nome, 
-                $valor->telefone,         // 3º param: telefone
-                $valor->email,            // 4º param: email
-                $valor->status,           // 5º param: status
-                $valor->cliente,          // 6º param: cliente
-                $valor->prestador         // 7º param: prestador
+                $valor->telefone,         
+                $valor->email,            
+                $valor->status,           
+                $valor->cliente,          
+                $valor->prestador         
             );
         }
     ?>

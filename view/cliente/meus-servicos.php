@@ -11,9 +11,16 @@ require_once __DIR__ . '/../../models/Servico.class.php';
 
 $servico = new Servico();
 $meus_servicos = $servico->getByCliente($_SESSION['cliente_id']);
+$tipos_servico = $servico->getTiposServico(); // Carregar tipos do Model
 
 // Inclua o menu do cliente para manter o padrão visual e navegação
 require_once 'menu-cliente.php';
+
+// Paginação (exemplo)
+$page = $_GET['page'] ?? 1;
+$per_page = 12;
+$total_servicos = count($meus_servicos);
+$servicos_paginados = array_slice($meus_servicos, ($page-1)*$per_page, $per_page);
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -402,6 +409,11 @@ require_once 'menu-cliente.php';
                         <label for="filtroTipo" class="form-label">Tipo de Serviço</label>
                         <select class="form-select" id="filtroTipo">
                             <option value="">Todos os tipos</option>
+                            <?php foreach ($tipos_servico as $tipo): ?>
+                                <option value="<?php echo strtolower($tipo['nome']); ?>">
+                                    <?php echo htmlspecialchars($tipo['nome']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -466,7 +478,7 @@ require_once 'menu-cliente.php';
             </div>
         </div>
 
-        <?php if (empty($meus_servicos)): ?>
+        <?php if (empty($servicos_paginados)): ?>
             <div class="card text-center">
                 <div class="card-body py-5">
                     <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
@@ -480,202 +492,20 @@ require_once 'menu-cliente.php';
             </div>
         <?php else: ?>
             <div class="row vista-cards" id="servicosContainer">
-                <?php foreach ($meus_servicos as $item): ?>
-                    <div class="col-md-6 col-lg-4 mb-4 servico-card"
-                        data-status="<?php echo $item['status_id']; ?>"
-                        data-tipo="<?php echo $item['tipo_servico_id']; ?>"
-                        data-titulo="<?php echo strtolower($item['titulo']); ?>"
-                        data-descricao="<?php echo strtolower($item['descricao']); ?>"
-                        data-data="<?php echo strtotime($item['data_solicitacao']); ?>"
-                        data-valor="<?php echo $item['orcamento_estimado'] ?? 0; ?>">
-
-                        <!-- Template para Vista Cards -->
-                        <div class="card h-100 template-card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h6 class="card-title mb-0"><?php echo htmlspecialchars($item['titulo']); ?></h6>
-                                    <span class="status-badge" style="background-color: <?php echo $item['status_cor']; ?>; color: white;">
-                                        <?php echo htmlspecialchars($item['status_texto']); ?>
-                                    </span>
-                                </div>
-
-                                <p class="text-muted small mb-2">
-                                    <i class="fas fa-tag me-1"></i>
-                                    <?php echo htmlspecialchars($item['tipo_servico']); ?>
-                                </p>
-
-                                <p class="card-text small">
-                                    <?php echo htmlspecialchars(substr($item['descricao'], 0, 100)); ?>
-                                    <?php if (strlen($item['descricao']) > 100): ?>...<?php endif; ?>
-                                </p>
-
-                                <div class="d-flex justify-content-between align-items-center text-muted small">
-                                    <span>
-                                        <i class="fas fa-calendar me-1"></i>
-                                        <?php echo date('d/m/Y', strtotime($item['data_solicitacao'])); ?>
-                                    </span>
-                                    <?php if ($item['orcamento_estimado']): ?>
-                                        <span>
-                                            <i class="fas fa-dollar-sign me-1"></i>
-                                            R$ <?php echo number_format($item['orcamento_estimado'], 2, ',', '.'); ?>
-                                        </span>
-                                    <?php endif; ?>
-                                </div>
-
-                                <div class="mt-3">
-                                    <small class="text-muted">
-                                        <i class="fas fa-map-marker-alt me-1"></i>
-                                        <?php echo htmlspecialchars($item['logradouro'] . ', ' . $item['numero'] . ' - ' . $item['bairro']); ?>
-                                    </small>
-                                </div>
-                            </div>
-
-                            <div class="card-footer bg-transparent">
-                                <div class="d-grid gap-2 d-md-flex">
-                                    <button class="btn btn-outline-primary btn-sm flex-fill"
-                                        onclick="verDetalhes(<?php echo $item['id']; ?>)">
-                                        <i class="fas fa-eye me-1"></i>
-                                        Detalhes
-                                    </button>
-
-                                    <?php if ($item['status_id'] == 1): ?>
-                                        <button class="btn btn-outline-secondary btn-sm btn-action"
-                                            onclick="editarServico(<?php echo $item['id']; ?>)">
-                                            <i class="fas fa-edit me-1"></i>
-                                            Editar
-                                        </button>
-                                        <button class="btn btn-outline-danger btn-sm btn-action"
-                                            onclick="cancelarServico(<?php echo $item['id']; ?>, '<?php echo htmlspecialchars($item['titulo']); ?>')"
-                                            title="Cancelar solicitação">
-                                            <i class="fas fa-times me-1"></i>
-                                            Cancelar
-                                        </button>
-                                    <?php elseif ($item['status_id'] == 2): ?>
-                                        <button class="btn btn-outline-danger btn-sm btn-action"
-                                            onclick="cancelarServico(<?php echo $item['id']; ?>, '<?php echo htmlspecialchars($item['titulo']); ?>')"
-                                            title="Cancelar solicitação">
-                                            <i class="fas fa-times me-1"></i>
-                                            Cancelar
-                                        </button>
-                                    <?php elseif ($item['status_id'] == 5): ?>
-                                        <button class="btn btn-outline-warning btn-sm btn-action"
-                                            onclick="avaliarServico(<?php echo $item['id']; ?>)"
-                                            title="Avaliar serviço concluído">
-                                            <i class="fas fa-star me-1"></i>
-                                            Avaliar
-                                        </button>
-                                    <?php elseif ($item['status_id'] == 3 || $item['status_id'] == 4): ?>
-                                        <small class="text-muted">Serviço em execução</small>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Template para Vista Lista (oculto inicialmente) -->
-                        <div class="row-servico template-lista" style="display: none;">
-                            <div class="col-md-1 d-flex justify-content-center">
-                                <span class="status-badge" style="background-color: <?php echo $item['status_cor']; ?>; color: white;">
-                                    <?php
-                                    // Versões curtas para a vista lista
-                                    $status_curto = [
-                                        'Aguardando Propostas' => 'Aguardando',
-                                        'Em Análise' => 'Análise',
-                                        'Proposta Aceita' => 'Aceita',
-                                        'Em Andamento' => 'Andamento',
-                                        'Concluído' => 'Concluído',
-                                        'Cancelado' => 'Cancelado'
-                                    ];
-                                    echo $status_curto[$item['status_texto']] ?? $item['status_texto'];
-                                    ?>
-                                </span>
-                            </div>
-                            <div class="col-md-4">
-                                <h6 class="mb-1"><?php echo htmlspecialchars($item['titulo']); ?></h6>
-                                <small class="text-muted">
-                                    <i class="fas fa-tag me-1"></i>
-                                    <?php echo htmlspecialchars($item['tipo_servico']); ?>
-                                </small>
-                            </div>
-                            <div class="col-md-3 text-center">
-                                <small class="text-muted">
-                                    <i class="fas fa-calendar me-1"></i>
-                                    <?php echo date('d/m/Y', strtotime($item['data_solicitacao'])); ?>
-                                </small>
-                            </div>
-                            <div class="col-md-2 text-center">
-                                <?php if ($item['orcamento_estimado']): ?>
-                                    <strong class="text-success">
-                                        R$ <?php echo number_format($item['orcamento_estimado'], 2, ',', '.'); ?>
-                                    </strong>
-                                <?php else: ?>
-                                    <span class="text-muted">-</span>
-                                <?php endif; ?>
-                            </div>
-                            <div class="col-md-2 text-center">
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-outline-primary btn-sm" onclick="verDetalhes(<?php echo $item['id']; ?>)" title="Ver detalhes">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <?php if ($item['status_id'] == 1 || $item['status_id'] == 2): ?>
-                                        <button class="btn btn-outline-danger btn-sm"
-                                            onclick="cancelarServico(<?php echo $item['id']; ?>, '<?php echo htmlspecialchars($item['titulo']); ?>')"
-                                            title="Cancelar">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Template para Vista Timeline (oculto inicialmente) -->
-                        <div class="timeline-item template-timeline" style="display: none;">
-                            <div class="timeline-date">
-                                <?php echo date('d/m/Y H:i', strtotime($item['data_solicitacao'])); ?>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="mb-0 flex-grow-1"><?php echo htmlspecialchars($item['titulo']); ?></h5>
-                                <span class="status-badge ms-3" style="background-color: <?php echo $item['status_cor']; ?>; color: white;">
-                                    <?php echo htmlspecialchars($item['status_texto']); ?>
-                                </span>
-                            </div>
-                            <p class="text-muted mb-2">
-                                <i class="fas fa-tag me-1"></i>
-                                <?php echo htmlspecialchars($item['tipo_servico']); ?>
-                            </p>
-                            <p class="mb-3"><?php echo htmlspecialchars($item['descricao']); ?></p>
-                            <div class="row align-items-center">
-                                <div class="col-md-8">
-                                    <small class="text-muted">
-                                        <i class="fas fa-map-marker-alt me-1"></i>
-                                        <?php echo htmlspecialchars($item['logradouro'] . ', ' . $item['numero'] . ' - ' . $item['bairro']); ?>
-                                    </small>
-                                </div>
-                                <div class="col-md-4 text-end">
-                                    <?php if ($item['orcamento_estimado']): ?>
-                                        <strong class="text-success">
-                                            <i class="fas fa-dollar-sign me-1"></i>
-                                            R$ <?php echo number_format($item['orcamento_estimado'], 2, ',', '.'); ?>
-                                        </strong>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <div class="mt-3 d-flex gap-2">
-                                <button class="btn btn-outline-primary btn-sm" onclick="verDetalhes(<?php echo $item['id']; ?>)">
-                                    <i class="fas fa-eye me-1"></i>
-                                    Ver Detalhes
-                                </button>
-                                <?php if ($item['status_id'] == 1 || $item['status_id'] == 2): ?>
-                                    <button class="btn btn-outline-danger btn-sm"
-                                        onclick="cancelarServico(<?php echo $item['id']; ?>, '<?php echo htmlspecialchars($item['titulo']); ?>')">
-                                        <i class="fas fa-times me-1"></i>
-                                        Cancelar
-                                    </button>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
+                <?php foreach ($servicos_paginados as $item): ?>
+                    <?php require 'component-servico-card.php'; ?>
                 <?php endforeach; ?>
             </div>
+            <!-- Paginação -->
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <?php for ($i=1; $i <= ceil($total_servicos/$per_page); $i++): ?>
+                        <li class="page-item <?php echo $i == $page ? 'active' : ''; ?>">
+                            <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                        </li>
+                    <?php endfor; ?>
+                </ul>
+            </nav>
         <?php endif; ?>
     </div>
 
@@ -886,32 +716,41 @@ require_once 'menu-cliente.php';
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Filtros
             const filtroStatus = document.getElementById('filtroStatus');
             const filtroTipo = document.getElementById('filtroTipo');
+            const filtroDataInicio = document.getElementById('filtroDataInicio');
+            const filtroDataFim = document.getElementById('filtroDataFim');
             const buscarServico = document.getElementById('buscarServico');
             const servicosCards = document.querySelectorAll('.servico-card');
 
-            // Aplicar filtros
             function aplicarFiltros() {
                 const statusSelecionado = filtroStatus.value;
                 const tipoSelecionado = filtroTipo.value;
+                const dataInicio = filtroDataInicio.value;
+                const dataFim = filtroDataFim.value;
                 const termoBusca = buscarServico.value.toLowerCase();
 
                 servicosCards.forEach(card => {
                     let mostrar = true;
 
-                    // Filtro por status
                     if (statusSelecionado && card.dataset.status !== statusSelecionado) {
                         mostrar = false;
                     }
-
-                    // Filtro por tipo de serviço
+                    // Corrigido: comparar tipo pelo id
                     if (tipoSelecionado && card.dataset.tipo !== tipoSelecionado) {
                         mostrar = false;
                     }
-
-                    // Busca por texto no título/descrição
+                    // Filtro por data
+                    if (dataInicio) {
+                        const dataCard = new Date(parseInt(card.dataset.data) * 1000);
+                        const inicio = new Date(dataInicio);
+                        if (dataCard < inicio) mostrar = false;
+                    }
+                    if (dataFim) {
+                        const dataCard = new Date(parseInt(card.dataset.data) * 1000);
+                        const fim = new Date(dataFim);
+                        if (dataCard > fim) mostrar = false;
+                    }
                     if (termoBusca) {
                         const titulo = card.dataset.titulo;
                         const descricao = card.dataset.descricao;
@@ -919,40 +758,29 @@ require_once 'menu-cliente.php';
                             mostrar = false;
                         }
                     }
-
                     card.style.display = mostrar ? 'block' : 'none';
                 });
             }
 
-            // Event listeners para filtros
             filtroStatus.addEventListener('change', aplicarFiltros);
             filtroTipo.addEventListener('change', aplicarFiltros);
+            filtroDataInicio.addEventListener('change', aplicarFiltros);
+            filtroDataFim.addEventListener('change', aplicarFiltros);
             buscarServico.addEventListener('input', aplicarFiltros);
 
-            // Carregar tipos de serviço para o filtro
-            carregarTiposServico();
+            // Filtro AJAX corrigido
+            function aplicarFiltrosAjax() {
+                const status = filtroStatus.value;
+                const tipo = filtroTipo.value;
+                const dataInicio = filtroDataInicio.value;
+                const dataFim = filtroDataFim.value;
+                fetch(`ajax-servicos.php?status=${status}&tipo=${tipo}&data_inicio=${dataInicio}&data_fim=${dataFim}`)
+                    .then(resp => resp.text())
+                    .then(html => {
+                        document.getElementById('servicosContainer').innerHTML = html;
+                    });
+            }
         });
-
-        function carregarTiposServico() {
-            const tipos = new Set();
-            const servicosCards = document.querySelectorAll('.servico-card');
-
-            servicosCards.forEach(card => {
-                const tipoElement = card.querySelector('.fa-tag');
-                if (tipoElement && tipoElement.nextElementSibling) {
-                    const tipoTexto = tipoElement.nextElementSibling.textContent.trim();
-                    tipos.add(tipoTexto);
-                }
-            });
-
-            const filtroTipo = document.getElementById('filtroTipo');
-            tipos.forEach(tipo => {
-                const option = document.createElement('option');
-                option.value = tipo.toLowerCase();
-                option.textContent = tipo;
-                filtroTipo.appendChild(option);
-            });
-        }
 
         function verDetalhes(servicoId) {
             // Depuração: log para saber se está sendo chamado
@@ -981,7 +809,7 @@ require_once 'menu-cliente.php';
         }
 
         function avaliarServico(servicoId) {
-            // Redirecionar para página de avaliação
+            // Redireciona para página de avaliação
             window.location.href = `avaliar-servico.php?id=${servicoId}`;
         }
 
@@ -1421,6 +1249,67 @@ require_once 'menu-cliente.php';
                         const propostaId = document.getElementById('recusaPropostaId').value;
                         const propostaItem = document.querySelector(`.proposta-item[data-id="${propostaId}"]`);
                         if (propostaItem) propostaItem.remove();
+                    } else {
+                        alert('Erro: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro de conexão. Tente novamente.');
+                });
+        });
+
+        // Função para abrir o modal de aceitação de proposta
+        function aceitarProposta(propostaId) {
+            document.getElementById('aceitarPropostaId').value = propostaId;
+            var modalElement = document.getElementById('aceitarModal');
+            if (!modalElement) {
+                console.error('Modal "aceitarModal" não encontrado no DOM');
+                return;
+            }
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        }
+
+        // Listener do formulário de aceitação de proposta
+        document.getElementById('aceitarForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const propostaId = document.getElementById('aceitarPropostaId').value;
+            if (!propostaId) {
+                alert('ID da proposta não encontrado.');
+                return;
+            }
+
+            const formData = new FormData(this);
+            formData.append('action', 'aceitar');
+
+            fetch('gerenciar-proposta.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    bootstrap.Modal.getOrCreateInstance(document.getElementById('aceitarModal')).hide();
+                    if (data.success) {
+                        // Remover todas as propostas pendentes da tela
+                        document.querySelectorAll('.proposta-item').forEach(function(item) {
+                            if (item.querySelector('.proposta-status') &&
+                                item.querySelector('.proposta-status').textContent.trim().toLowerCase() === 'pendente') {
+                                item.remove();
+                            }
+                        });
+                        // Atualizar status do serviço para "Proposta Aceita" (sem reload)
+                        document.querySelectorAll('.status-badge').forEach(function(badge) {
+                            if (badge.textContent.trim().toLowerCase().includes('aguardando') ||
+                                badge.textContent.trim().toLowerCase().includes('análise')) {
+                                badge.textContent = 'Proposta Aceita';
+                                badge.style.backgroundColor = '#28a745'; // verde
+                            }
+                        });
+                        alert('Proposta aceita com sucesso!');
+                        // Se quiser recarregar, descomente:
+                        // window.location.reload();
                     } else {
                         alert('Erro: ' + data.message);
                     }

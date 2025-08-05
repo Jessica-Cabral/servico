@@ -268,7 +268,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Login'])) {
                     </button>
                 </div>
             </div>
-            <a href="index.php?Recuperar" class="forgot-link">
+            <a href="Recuperar.php" class="forgot-link">
                 <i class="bi bi-key me-1"></i> Esqueceu a senha?
             </a>
             <button name="Login" class="btn btn-login" type="submit">

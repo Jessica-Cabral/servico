@@ -1,43 +1,54 @@
 <?php
 require_once 'controllers/ClienteController.class.php';
 require_once 'controllers/PrestadorController.class.php';
-require_once 'model/Pessoa.class.php';
 
-$sucesso = false;
+// Exibe mensagens de erro/sucesso
 $erro = '';
+if (isset($_GET['erro'])) {
+    $erro = $_GET['erro'];
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = trim($_POST['nome'] ?? '');
     $email = trim($_POST['email'] ?? '');
-    $senha = trim($_POST['senha'] ?? '');
-    $tipo = trim($_POST['tipo'] ?? '');
+    $senha = $_POST['senha'] ?? '';
+    $tipo = $_POST['tipo'] ?? '';
+    $telefone = $_POST['telefone'] ?? '';
 
-    $cliente = ($tipo === 'cliente') ? 1 : 0;
-    $prestador = ($tipo === 'prestador') ? 1 : 0;
-
-    if ($nome && $email && $senha && $tipo) {
-        $pessoa = new Pessoa();
-        $ok = $pessoa->cadastrarPessoa(
-            $nome,
-            '', // cpf
-            $email,
-            '', // data_nascimento
-            '', // telefone
-            $senha,
-            $cliente,
-            $prestador
-        );
-        if ($ok) {
-            header('Location: Login.php?cadastro=sucesso');
-            exit();
-        } else {
-            $erro = "Erro ao cadastrar. Tente novamente.";
-        }
+    if (!$nome || !$email || !$senha || !$tipo) {
+        $erro = 'Preencha todos os campos obrigatórios.';
     } else {
-        $erro = "Preencha todos os campos obrigatórios.";
+        if ($tipo === 'cliente') {
+            $clienteController = new ClienteController();
+            $dados = [
+                'nome' => $nome,
+                'email' => $email,
+                'senha' => password_hash($senha, PASSWORD_DEFAULT),
+                'tipo' => $tipo,
+                'telefone' => $telefone,
+                'data_nascimento' => null // Adapte se quiser pedir no formulário
+            ];
+            if ($clienteController->cadastrarCliente($dados['nome'], $dados['email'], $senha)) {
+                header('Location: Login.php?cadastro=sucesso');
+                exit();
+            } else {
+                $erro = 'Erro ao cadastrar cliente.';
+            }
+        } elseif ($tipo === 'prestador') {
+            $prestadorController = new PrestadorController();
+            if ($prestadorController->cadastrarPrestador($nome, $email, $senha)) {
+                header('Location: Login.php?cadastro=sucesso');
+                exit();
+            } else {
+                $erro = 'Erro ao cadastrar prestador.';
+            }
+        } else {
+            $erro = 'Tipo de conta inválido.';
+        }
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -160,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <i class="bi bi-exclamation-triangle-fill"></i> <?php echo htmlspecialchars($erro); ?>
         </div>
     <?php endif; ?>
-    <form method="post" action="CadUsuario.php" autocomplete="off">
+    <form method="post" id="cadastroForm" action="controllers/ClienteController.class.php?acao=cadastrar" autocomplete="off">
         <div class="mb-3">
             <label for="nome" class="form-label"><i class="bi bi-person form-icon"></i>Nome completo</label>
             <input type="text" class="form-control" id="nome" name="nome" required maxlength="80" placeholder="Digite seu nome completo">
@@ -181,6 +192,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option value="prestador">Prestador</option>
             </select>
         </div>
+        <div class="mb-3">
+            <label for="telefone" class="form-label"><i class="bi bi-telephone form-icon"></i>Telefone</label>
+            <input type="text" class="form-control" id="telefone" name="telefone" maxlength="15" placeholder="(99) 99999-9999">
+        </div>
         <div class="d-grid gap-2">
             <button type="submit" class="btn btn-cadastro py-2"><i class="bi bi-check-circle me-1"></i>Cadastrar</button>
             <a href="HomePage.php" class="btn btn-back py-2"><i class="bi bi-arrow-left me-1"></i>Voltar</a>
@@ -191,5 +206,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     &copy; <script>document.write(new Date().getFullYear())</script> Chama Serviço. Todos os direitos reservados.
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.getElementById('tipo').addEventListener('change', function() {
+    var form = document.getElementById('cadastroForm');
+    if (this.value === 'prestador') {
+        form.action = 'controllers/PrestadorController.class.php?acao=cadastrar';
+    } else {
+        form.action = 'controllers/ClienteController.class.php?acao=cadastrar';
+    }
+});
+</script>
 </body>
 </html>

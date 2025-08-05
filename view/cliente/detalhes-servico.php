@@ -1007,20 +1007,16 @@ $imagens = $servico->getImagensServico($servico_id);
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            <!-- Funções JavaScript para interações -->
-           function aceitarProposta(propostaId) {
-    console.log('Tentando abrir modal para proposta ID:', propostaId); // Debug
-    
-    // Corrigido: id do modal deve ser 'aceitarModal'
-    document.getElementById('aceitarPropostaId').value = propostaId;
-    var modalElement = document.getElementById('aceitarModal');
-    if (!modalElement) {
-        console.error('Modal "aceitarModal" não encontrado no DOM');
-        return;
-    }
-    const modal = new bootstrap.Modal(modalElement);
-    modal.show();
-}
+            function aceitarProposta(propostaId) {
+                document.getElementById('aceitarPropostaId').value = propostaId;
+                var modalElement = document.getElementById('aceitarModal');
+                if (!modalElement) {
+                    console.error('Modal "aceitarModal" não encontrado no DOM');
+                    return;
+                }
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+            }
 
             document.getElementById('aceitarForm').addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -1039,220 +1035,30 @@ $imagens = $servico->getImagensServico($servico_id);
                         body: formData
                     })
                     .then(response => response.json())
-                    .then(data => {
+                    .then(function(data) {
                         bootstrap.Modal.getOrCreateInstance(document.getElementById('aceitarModal')).hide();
                         if (data.success) {
+                            // Remover todas as propostas pendentes da tela
+                            document.querySelectorAll('.proposta-item').forEach(function(item) {
+                                if (item.querySelector('.proposta-status') &&
+                                    item.querySelector('.proposta-status').textContent.trim().toLowerCase() === 'pendente') {
+                                    item.remove();
+                                }
+                            });
+                            // Atualizar status do serviço para "Proposta Aceita" (sem reload)
+                            document.querySelectorAll('.status-badge-main').forEach(function(badge) {
+                                badge.textContent = 'Proposta Aceita';
+                            });
                             alert('Proposta aceita com sucesso!');
-                            window.location.reload();
+                            // Se quiser recarregar, descomente:
+                            // window.location.reload();
                         } else {
                             alert('Erro: ' + data.message);
                         }
                     })
-                    .catch(error => {
+                    .catch(function(error) {
                         console.error('Erro:', error);
                         alert('Erro de conexão. Tente novamente.');
                     });
             });
-
-            function abrirContraProposta(propostaId, valorOriginal, prazoOriginal) {
-                document.getElementById('propostaId').value = propostaId;
-                document.getElementById('valorOriginal').textContent = new Intl.NumberFormat('pt-BR', {
-                    minimumFractionDigits: 2
-                }).format(valorOriginal);
-                document.getElementById('prazoOriginal').textContent = prazoOriginal;
-
-                document.getElementById('novoValor').value = valorOriginal;
-                document.getElementById('novoPrazo').value = prazoOriginal;
-
-                // Abre o modal de contra-proposta
-                var modal = document.getElementById('contraPropostaModal');
-                bootstrap.Modal.getOrCreateInstance(modal).show();
-            }
-
-            // Event Listeners para formulários
-            document.getElementById('contraPropostaForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const novoValor = parseFloat(document.getElementById('novoValor').value);
-                const novoPrazo = parseInt(document.getElementById('novoPrazo').value);
-
-                if (novoValor <= 0) {
-                    alert('O valor deve ser maior que zero.');
-                    return;
-                }
-
-                if (novoPrazo <= 0) {
-                    alert('O prazo deve ser maior que zero.');
-                    return;
-                }
-
-                const formData = new FormData(this);
-                formData.append('action', 'contra_proposta');
-
-                fetch('gerenciar-proposta.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            bootstrap.Modal.getOrCreateInstance(document.getElementById('contraPropostaModal')).hide();
-                            alert('Contra-proposta enviada com sucesso!');
-                            window.location.reload();
-                        } else {
-                            alert('Erro: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erro:', error);
-                        alert('Erro de conexão. Tente novamente.');
-                    });
-            });
-
-            document.getElementById('recusaForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-                formData.append('action', 'recusar');
-
-                fetch('gerenciar-proposta.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            bootstrap.Modal.getOrCreateInstance(document.getElementById('recusaModal')).hide();
-                            alert('Proposta recusada.');
-                            // Remover proposta da tela sem recarregar
-                            const propostaId = document.getElementById('recusaPropostaId').value;
-                            const propostaItem = document.querySelector(`.proposta-item[data-id="${propostaId}"]`);
-                            if (propostaItem) propostaItem.remove();
-                        } else {
-                            alert('Erro: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erro:', error);
-                        alert('Erro de conexão. Tente novamente.');
-                    });
-            });
-
-            // Funções de utilidade
-            function abrirModalImagem(src) {
-                document.getElementById('imagemModal').src = src;
-                var modal = document.getElementById('modalImagem');
-                bootstrap.Modal.getOrCreateInstance(modal).show();
-            }
-
-            function ordenarPropostas(criterio, ordem) {
-                const container = document.getElementById('propostas-container');
-                const propostas = Array.from(container.querySelectorAll('.proposta-item'));
-
-                propostas.sort((a, b) => {
-                    let valorA, valorB;
-                    switch (criterio) {
-                        case 'valor':
-                            valorA = parseFloat(a.dataset.valor);
-                            valorB = parseFloat(b.dataset.valor);
-                            break;
-                        case 'prazo':
-                            valorA = parseInt(a.dataset.prazo);
-                            valorB = parseInt(b.dataset.prazo);
-                            break;
-                        case 'data':
-                            valorA = parseInt(a.dataset.data);
-                            valorB = parseInt(b.dataset.data);
-                            break;
-                    }
-
-                    return ordem === 'asc' ? valorA - valorB : valorB - valorA;
-                });
-
-                propostas.forEach(proposta => container.appendChild(proposta));
-            }
-
-            function toggleHistorico(propostaId) {
-                const historico = document.getElementById(`historico-${propostaId}`);
-                const toggle = document.getElementById(`toggle-${propostaId}`);
-
-                if (historico.classList.contains('show')) {
-                    historico.classList.remove('show');
-                    toggle.classList.remove('fa-chevron-up');
-                    toggle.classList.add('fa-chevron-down');
-                } else {
-                    historico.classList.add('show');
-                    toggle.classList.remove('fa-chevron-down');
-                    toggle.classList.add('fa-chevron-up');
-                }
-            }
-
-            function abrirChat(prestadorId) {
-                alert(`Chat com prestador ${prestadorId} - A implementar`);
-            }
-
-            // Funções das melhorias implementadas
-            function compartilharServico() {
-                if (navigator.share) {
-                    navigator.share({
-                        title: 'Serviço: <?php echo htmlspecialchars($detalhes['titulo']); ?>',
-                        text: 'Confira este serviço na plataforma Chama Serviço',
-                        url: window.location.href
-                    });
-                } else {
-                    navigator.clipboard.writeText(window.location.href);
-                    alert('Link copiado para área de transferência!');
-                }
-            }
-
-            function duplicarServico() {
-                if (confirm('Deseja criar um novo serviço baseado neste?')) {
-                    window.location.href = `novo-servico.php?duplicar=<?php echo $servico_id; ?>`;
-                }
-            }
-
-            function exportarPDF() {
-                window.print();
-            }
-
-            function copiarEndereco() {
-                const endereco = '<?php echo htmlspecialchars($detalhes['endereco_completo']); ?>';
-                navigator.clipboard.writeText(endereco);
-                alert('Endereço copiado!');
-            }
-
-            function abrirMaps() {
-                const endereco = encodeURIComponent('<?php echo htmlspecialchars($detalhes['endereco_completo']); ?>');
-                window.open(`https://www.google.com/maps/search/${endereco}`, '_blank');
-            }
-
-            function toggleComparador() {
-                const content = document.getElementById('comparadorContent');
-                content.style.display = content.style.display === 'none' ? 'block' : 'none';
-            }
-
-            function convidarPrestador(prestadorId) {
-                if (confirm('Deseja enviar um convite para este prestador?')) {
-                    fetch('enviar-convite.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                prestador_id: prestadorId,
-                                servico_id: <?php echo $servico_id; ?>
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert('Convite enviado com sucesso!');
-                            } else {
-                                alert('Erro: ' + data.message);
-                            }
-                        });
-                }
-            }
-
-            function adicionarDocumento() {
-                alert('Funcionalidade de upload de documentos - A implementar');
-            }
         </script>

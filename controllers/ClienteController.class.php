@@ -81,9 +81,19 @@ class ClienteController
         }
 
         $cliente_id = $_SESSION['cliente_id'];
+        $status_map = [
+            1 => ['texto' => 'Aguardando Propostas', 'cor' => '#ffc107', 'curto' => 'Aguardando'],
+            2 => ['texto' => 'Em Andamento', 'cor' => '#007bff', 'curto' => 'Andamento'],
+            3 => ['texto' => 'Concluído', 'cor' => '#28a745', 'curto' => 'Concluído'],
+            4 => ['texto' => 'Cancelado', 'cor' => '#dc3545', 'curto' => 'Cancelado']
+        ];
+
+        // Paginação e filtros
+        $page = $_GET['page'] ?? 1;
+        $per_page = 12;
         $servicos = $this->servico->getByCliente($cliente_id);
 
-        include __DIR__ . '/../views/cliente/meus-servicos.php';
+        include __DIR__ . '/../view/cliente/meus-servicos.php';
     }
 
     public function atualizarPerfil()
@@ -169,4 +179,91 @@ class ClienteController
         // Implemente um método create no model Cliente se não existir
         return $cliente->create($dados);
     }
+
+    public function avaliarServico($servico_id)
+    {
+        // Avalia um serviço prestado
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (empty($_SESSION['cliente_id'])) {
+            header('Location: ../Login.php');
+            exit();
+        }
+
+        require_once __DIR__ . '/../models/Avaliacao.class.php';
+
+        $cliente_id = $_SESSION['cliente_id'];
+        $avaliacao = new Avaliacao();
+
+        // Verifica se já foi avaliado
+        if ($avaliacao->jaAvaliou($servico_id, $cliente_id)) {
+            echo '<div class="alert alert-info">Você já avaliou este serviço.</div>';
+            exit();
+        }
+
+        // Processa avaliação
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $nota = $_POST['nota'] ?? null;
+            $comentario = $_POST['comentario'] ?? '';
+            $dados = [
+                'servico_id' => $servico_id,
+                'cliente_id' => $cliente_id,
+                'prestador_id' => $dados_servico['prestador_id'],
+                'nota' => $nota,
+                'comentario' => $comentario
+            ];
+            if ($avaliacao->criar($dados)) {
+                echo '<div class="alert alert-success">Avaliação enviada com sucesso!</div>';
+                exit();
+            } else {
+                echo '<div class="alert alert-danger">Erro ao enviar avaliação.</div>';
+            }
+        }
+
+        // Inclui a view do formulário
+        include __DIR__ . '/../view/cliente/avaliar-servico.php';
+    }
 }
+
+if ($_GET['acao'] === 'cadastrar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nome = trim($_POST['nome']);
+    $email = trim($_POST['email']);
+    $senha = $_POST['senha'];
+    $telefone = $_POST['telefone'];
+    $data_nascimento = $_POST['data_nascimento'];
+    $tipos = $_POST['tipo'] ?? [];
+    $tipo = in_array('prestador', $tipos) ? 'prestador' : 'cliente';
+
+    $dados = [
+        'nome' => $nome,
+        'email' => $email,
+        'senha' => password_hash($senha, PASSWORD_DEFAULT),
+        'tipo' => $tipo,
+        'telefone' => $telefone,
+        'data_nascimento' => $data_nascimento
+    ];
+    if ($cliente->create($dados)) {
+        header('Location: ../Login.php?cadastro=sucesso');
+        exit();
+    } else {
+        header('Location: ../view/CadPessoa.php?erro=Erro ao cadastrar');
+        exit();
+    }
+}
+    $dados = [
+        'nome' => $nome,
+        'email' => $email,
+        'senha' => password_hash($senha, PASSWORD_DEFAULT),
+        'tipo' => $tipo,
+        'cpf' => $cpf,
+        'telefone' => $telefone,
+        'data_nascimento' => $data_nascimento
+    ];
+    if ($cliente->create($dados)) {
+        header('Location: ../Login.php?cadastro=sucesso');
+        exit();
+    } else {
+        header('Location: ../view/CadPessoa.php?erro=Erro ao cadastrar');
+        exit();
+    }
+
+?>
