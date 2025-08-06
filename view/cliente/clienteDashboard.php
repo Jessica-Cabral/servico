@@ -209,7 +209,7 @@ require_once 'menu-cliente.php';
                                 Novo Serviço
                             </a>
                             <!-- Botão para abrir modal perfil -->
-                            <button class="btn btn-outline-secondary btn-custom" id="btnAbrirPerfil" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver/editar perfil">
+                            <button class="btn btn-outline-secondary btn-custom" id="btnAbrirPerfil" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="perfilModal">
                                 <i class="fas fa-user"></i> Perfil
                             </button>
                         </div>

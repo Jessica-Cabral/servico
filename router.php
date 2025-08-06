@@ -49,3 +49,47 @@ if (isset($_GET['pagina']) && $_GET['pagina'] === 'avaliar-servico' && isset($_G
     $controller->avaliarServico($_GET['id']);
     exit();
 }
+
+class Router {
+    private $routes = [];
+
+    public function __construct() {
+        // Definir rotas disponíveis
+        $this->routes = [
+            'home' => 'HomeController@index',
+            'login' => 'LoginController@index',
+            'dashboard' => 'PrestadorController@dashboard',
+            'perfil' => 'PrestadorController@perfil',
+            'oportunidades' => 'PrestadorController@oportunidades',
+            'propostas' => 'PrestadorController@propostas'
+        ];
+    }
+
+    public function route($url) {
+        // Remove barras extras e sanitiza a URL
+        $url = trim($url, '/');
+        $url = filter_var($url, FILTER_SANITIZE_URL);
+
+        // Verifica se a rota existe
+        if (array_key_exists($url, $this->routes)) {
+            list($controller, $method) = explode('@', $this->routes[$url]);
+            
+            // Verifica se o arquivo do controller existe
+            $controllerFile = __DIR__ . "/controllers/{$controller}.php";
+            if (file_exists($controllerFile)) {
+                require_once $controllerFile;
+                
+                // Instancia o controller e chama o método
+                $controllerInstance = new $controller();
+                if (method_exists($controllerInstance, $method)) {
+                    $controllerInstance->$method();
+                    return;
+                }
+            }
+        }
+
+        // Rota não encontrada
+        header("HTTP/1.0 404 Not Found");
+        require_once __DIR__ . '/views/404.php';
+    }
+}

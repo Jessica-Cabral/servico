@@ -16,6 +16,6 @@ if (ini_get("session.use_cookies")) {
 session_destroy();
 
 // Redirecionar para login
-header('Location: /servico/view/auth/login.php');
+header('Location: /servico/Login.php');
 exit();
 ?>

@@ -35,3 +35,13 @@ if (isset($_SESSION['user_type'])) {
 // Se não estiver logado, redireciona para login
 header('Location: Login.php');
 exit();
+
+// Define constante da URL base
+define('BASE_URL', 'http://localhost/servico');
+
+// Obtém a URL atual
+$url = isset($_GET['url']) ? $_GET['url'] : 'home';
+
+// Instancia o Router
+$router = new Router();
+$router->route($url);

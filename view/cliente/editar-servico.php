@@ -35,7 +35,7 @@ if ($_POST) {
     if (!empty($_POST['data_desejada']) && !empty($_POST['horario_desejado'])) {
         $data_atendimento = $_POST['data_desejada'] . ' ' . $_POST['horario_desejado'] . ':00';
     }
-    
+
     $dados_update = [
         'id' => $servico_id,
         'tipo_servico_id' => $_POST['tipo_servico_id'],
@@ -59,17 +59,18 @@ if ($_POST) {
 
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Serviço - Chama Serviço</title>
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -79,32 +80,32 @@ if ($_POST) {
             --danger-color: #e74c3c;
             --edit-color: #3498db;
         }
-        
+
         body {
             background-color: #f8f9fa;
         }
-        
+
         .navbar {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         }
-        
+
         .card {
             border: none;
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        
+
         .card-header.bg-edit {
             background: linear-gradient(135deg, var(--edit-color), #5dade2) !important;
             color: white !important;
         }
-        
+
         .btn-edit {
             background: linear-gradient(135deg, var(--edit-color), #5dade2);
             border: none;
             color: white;
         }
-        
+
         .btn-edit:hover {
             background: linear-gradient(135deg, #2980b9, var(--edit-color));
             color: white;
@@ -112,6 +113,7 @@ if ($_POST) {
         }
     </style>
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
@@ -120,7 +122,7 @@ if ($_POST) {
                 <i class="fas fa-tools me-2"></i>
                 Chama Serviço
             </a>
-            
+
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="meus-servicos.php">
                     <i class="fas fa-arrow-left me-1"></i>
@@ -162,8 +164,8 @@ if ($_POST) {
                                     <select class="form-select" id="tipo_servico_id" name="tipo_servico_id" required>
                                         <option value="">Selecione o tipo de serviço</option>
                                         <?php foreach ($tipos_servico as $tipo): ?>
-                                            <option value="<?php echo $tipo['id']; ?>" 
-                                                    <?php echo $tipo['id'] == $dados_servico['tipo_servico_id'] ? 'selected' : ''; ?>>
+                                            <option value="<?php echo $tipo['id']; ?>"
+                                                <?php echo $tipo['id'] == $dados_servico['tipo_servico_id'] ? 'selected' : ''; ?>>
                                                 <?php echo htmlspecialchars($tipo['nome']); ?>
                                             </option>
                                         <?php endforeach; ?>
@@ -182,8 +184,8 @@ if ($_POST) {
 
                             <div class="mb-3">
                                 <label for="titulo" class="form-label">Título do Serviço *</label>
-                                <input type="text" class="form-control" id="titulo" name="titulo" 
-                                       value="<?php echo htmlspecialchars($dados_servico['titulo']); ?>" required>
+                                <input type="text" class="form-control" id="titulo" name="titulo"
+                                    value="<?php echo htmlspecialchars($dados_servico['titulo']); ?>" required>
                             </div>
 
                             <div class="mb-3">
@@ -196,18 +198,18 @@ if ($_POST) {
                                 <div class="col-md-6 mb-3">
                                     <label for="data_desejada" class="form-label">Data Desejada</label>
                                     <input type="date" class="form-control" id="data_desejada" name="data_desejada"
-                                           value="<?php echo $dados_servico['data_atendimento'] ? date('Y-m-d', strtotime($dados_servico['data_atendimento'])) : ''; ?>">
+                                        value="<?php echo $dados_servico['data_atendimento'] ? date('Y-m-d', strtotime($dados_servico['data_atendimento'])) : ''; ?>">
                                     <small class="text-muted">Data em que gostaria que o serviço fosse realizado (opcional)</small>
                                 </div>
-                                
+
                                 <div class="col-md-6 mb-3">
                                     <label for="horario_desejado" class="form-label">Horário Desejado</label>
                                     <select class="form-select" id="horario_desejado" name="horario_desejado">
                                         <option value="">Selecione o horário</option>
-                                        <?php 
+                                        <?php
                                         $horario_atual = $dados_servico['data_atendimento'] ? date('H:i', strtotime($dados_servico['data_atendimento'])) : '';
                                         $horarios = ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
-                                        foreach ($horarios as $horario): 
+                                        foreach ($horarios as $horario):
                                         ?>
                                             <option value="<?php echo $horario; ?>" <?php echo $horario == $horario_atual ? 'selected' : ''; ?>>
                                                 <?php echo $horario . ' - ' . ($horario < '12:00' ? 'Manhã' : ($horario < '18:00' ? 'Tarde' : 'Noite')); ?>
@@ -225,7 +227,7 @@ if ($_POST) {
                                         <option value="">Selecione o endereço</option>
                                         <?php foreach ($enderecos as $endereco): ?>
                                             <option value="<?php echo $endereco['id']; ?>"
-                                                    <?php echo $endereco['id'] == $dados_servico['endereco_id'] ? 'selected' : ''; ?>>
+                                                <?php echo $endereco['id'] == $dados_servico['endereco_id'] ? 'selected' : ''; ?>>
                                                 <?php echo htmlspecialchars($endereco['logradouro'] . ', ' . $endereco['numero'] . ' - ' . $endereco['bairro']); ?>
                                             </option>
                                         <?php endforeach; ?>
@@ -236,9 +238,9 @@ if ($_POST) {
                                     <label for="orcamento_estimado" class="form-label">Orçamento Estimado</label>
                                     <div class="input-group">
                                         <span class="input-group-text">R$</span>
-                                        <input type="number" class="form-control" id="orcamento_estimado" 
-                                               name="orcamento_estimado" step="0.01" 
-                                               value="<?php echo $dados_servico['orcamento_estimado']; ?>">
+                                        <input type="number" class="form-control" id="orcamento_estimado"
+                                            name="orcamento_estimado" step="0.01"
+                                            value="<?php echo $dados_servico['orcamento_estimado']; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -262,7 +264,7 @@ if ($_POST) {
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Configurar data mínima (hoje)
@@ -283,14 +285,5 @@ if ($_POST) {
         });
     </script>
 </body>
+
 </html>
-
-<?php
-// View para edição de serviço do cliente (MVC)
-
-// Recupera dados do serviço para edição
-
-// Exibe formulário para editar serviço
-
-// Scripts JS para interatividade do formulário
-?>

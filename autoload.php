@@ -1,34 +1,25 @@
 <?php
 
-// Exemplo seguro de autoload:
-function autoloadModels($class) {
-    $paths = [
-        __DIR__ . '/models/' . $class . '.php',
-        __DIR__ . '/controllers/' . $class . '.php',
+spl_autoload_register(function ($className) {
+    // Define os diretórios para procurar as classes
+    $directories = [
+        'models/',
+        'controllers/',
+        'helpers/',
+        'interfaces/',
+        'traits/'
     ];
-    foreach ($paths as $file) {
+
+    // Remove 'Controller' ou 'Model' do nome se existir
+    $classFile = str_replace(['Controller', 'Model'], '', $className);
+    
+    foreach ($directories as $directory) {
+        $file = __DIR__ . '/' . $directory . $className . '.php';
         if (file_exists($file)) {
-            require_once $file ;
-            return;
+            require_once $file;
+            return true;
         }
     }
-}
-
-// Registra o autoload apenas se a função existir
-if (function_exists('autoloadModels')) {
-    spl_autoload_register('autoloadModels');
-} else {
-    // Alternativa: usar autoload anônimo
-    spl_autoload_register(function($class) {
-        $paths = [
-            __DIR__ . '/models/' . $class . '.php',
-            __DIR__ . '/controllers/' . $class . '.php',
-        ];
-        foreach ($paths as $file) {
-            if (file_exists($file)) {
-                require_once $file;
-                return;
-            }
-        }
-    });
-}
+    
+    return false;
+});
