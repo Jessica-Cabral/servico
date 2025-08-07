@@ -1,7 +1,7 @@
 <?php
 class Database {
     private $host = 'localhost';
-    private $db_name = 'bd_servicos'; // Corrigido: nome do banco sem espaço e igual ao seu .sql
+    private $db_name = 'bd_servico'; // Corrigido: nome do banco sem espaço e igual ao seu .sql
     private $username = 'root';
     private $password = '';
     private $conn;

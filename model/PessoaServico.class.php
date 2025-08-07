@@ -2,7 +2,7 @@
 // Incluir classe de conexão
 include_once 'Conexao.class.php';
 include_once 'TipoServico.class.php';
-include_once 'ServicoClass.php'
+include_once 'ServicoClass.php';
 // Classe pessoaServico
 class Pessoa_servico extends Conexao
 {

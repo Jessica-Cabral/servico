@@ -27,7 +27,6 @@ $servicos_disponiveis = $servico->getDisponiveis(5);
 $minhas_propostas = $proposta->getByPrestador($prestador_id, 4);
 $grafico_dados = $prestador->getGraficoDados($prestador_id);
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 
