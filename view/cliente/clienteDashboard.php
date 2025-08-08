@@ -24,7 +24,7 @@ $cliente_nome = $_SESSION['cliente_nome'] ?? 'Cliente';
 
 // Obtém estatísticas do cliente de forma segura
 try {
-    $stats = $cliente->getStats($cliente_id);
+    $stats = $cliente->getStatus($cliente_id);
 } catch (Exception $e) {
     $stats = [
         'ativos' => 0,

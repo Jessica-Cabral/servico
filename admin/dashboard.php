@@ -1148,21 +1148,43 @@ if (!isset($_SESSION['admin_id'])) {
 
         // Toggle status do usuário
         function toggleStatusUsuario(id) {
-            if (confirm('Deseja alterar o status deste usuário?')) {
-                fetch(`../controllers/AdminController.class.php?acao=toggle_status_usuario&id=${id}`, {
-                    method: 'POST'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.sucesso) {
-                        alert(data.mensagem);
-                        listarUsuarios(paginaAtualUsuarios);
-                        carregarUsuarios(); // Recarregar estatísticas
-                    } else {
-                        alert('Erro: ' + data.mensagem);
-                    }
-                });
-            }
+            Swal.fire({
+                title: 'Alterar status?',
+                text: "Deseja alterar o status deste usuário?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#764ba2',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sim, alterar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`../controllers/AdminController.class.php?acao=toggle_status_usuario&id=${id}`, {
+                        method: 'POST'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.sucesso) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sucesso!',
+                                text: data.mensagem,
+                                showConfirmButton: false,
+                                timer: 1800
+                            });
+                            listarUsuarios(paginaAtualUsuarios);
+                            carregarUsuarios(); // Recarregar estatísticas
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro!',
+                                text: data.mensagem,
+                                confirmButtonColor: '#764ba2'
+                            });
+                        }
+                    });
+                }
+            });
         }
 
         // Funções do modal
@@ -1175,90 +1197,33 @@ if (!isset($_SESSION['admin_id'])) {
 
         function deletarUsuarioModal() {
             const id = document.getElementById('editarUsuarioId').value;
-            if (confirm('Deseja realmente deletar este usuário? Esta ação não pode ser desfeita.')) {
-                fetch(`../controllers/AdminController.class.php?acao=deletar_usuario&id=${id}`, {
-                    method: 'DELETE'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.sucesso) {
-                        alert(data.mensagem);
-                        bootstrap.Modal.getInstance(document.getElementById('modalUsuario')).hide();
-                        listarUsuarios(paginaAtualUsuarios);
-                        carregarUsuarios(); // Recarregar estatísticas
-                    } else {
-                        alert('Erro: ' + data.mensagem);
-                    }
-                });
-            }
-        }
-
-        function exportarUsuarios() {
-            alert('Funcionalidade de exportação será implementada em breve!');
-        }
-
-        // Event listeners para usuários
-        document.addEventListener('DOMContentLoaded', function() {
-            // Form submit para editar usuário
-            document.addEventListener('submit', function(e) {
-                if (e.target.id === 'formEditarUsuario') {
-                    e.preventDefault();
-                    
-                    const id = document.getElementById('editarUsuarioId').value;
-                    const formData = new FormData(e.target);
-
-                    fetch(`../controllers/AdminController.class.php?acao=atualizar_usuario&id=${id}`, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.sucesso) {
-                            alert(data.mensagem);
-                            listarUsuarios(paginaAtualUsuarios);
-                        } else {
-                            alert('Erro: ' + data.mensagem);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erro:', error);
-                        alert('Erro ao processar solicitação');
-                    });
-                }
-
-                // Form submit para tipo de serviço (remover qualquer referência a 'icone')
-                if (e.target.id === 'formTipoServico') {
-                    e.preventDefault();
-                    const id = document.getElementById('tipoServicoId').value;
-                    const formData = new FormData();
-                    formData.append('nome', document.getElementById('nomeServico').value);
-                    formData.append('categoria', document.getElementById('categoriaServico').value);
-                    formData.append('preco_medio', document.getElementById('precoMedioServico').value);
-                    formData.append('ativo', document.getElementById('ativoServico').value);
-                    formData.append('descricao', document.getElementById('descricaoServico').value);
-
-                    // Remover: formData.append('icone', ...);
-
-                    const url = id ? 
-                        `../controllers/AdminController.class.php?acao=atualizar_tipo_servico&id=${id}` :
-                        '../controllers/AdminController.class.php?acao=criar_tipo_servico';
-
-                    fetch(url, {
-                        method: 'POST',
-                        body: formData
+            Swal.fire({
+                title: 'Tem certeza?',
+                text: "Deseja realmente deletar este usuário? Esta ação não pode ser desfeita.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sim, deletar!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`../controllers/AdminController.class.php?acao=deletar_usuario&id=${id}`, {
+                        method: 'DELETE'
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.sucesso) {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Sucesso!',
+                                title: 'Deletado!',
                                 text: data.mensagem,
                                 showConfirmButton: false,
                                 timer: 1800
                             });
-                            bootstrap.Modal.getInstance(document.getElementById('modalTipoServico')).hide();
-                            listarTiposServico();
+                            bootstrap.Modal.getInstance(document.getElementById('modalUsuario')).hide();
+                            listarUsuarios(paginaAtualUsuarios);
+                            carregarUsuarios(); // Recarregar estatísticas
                         } else {
                             Swal.fire({
                                 icon: 'error',
@@ -1267,58 +1232,145 @@ if (!isset($_SESSION['admin_id'])) {
                                 confirmButtonColor: '#764ba2'
                             });
                         }
-                    })
-                    .catch(error => {
-                        console.error('Erro:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erro!',
-                            text: 'Erro ao processar solicitação',
-                            confirmButtonColor: '#764ba2'
-                        });
-                    });
-                }
-
-                // Form submit para status
-                if (e.target.id === 'formStatus') {
-                    e.preventDefault();
-                    
-                    const id = document.getElementById('statusId').value;
-                    const formData = new FormData();
-                    formData.append('nome', document.getElementById('nomeStatus').value);
-                    formData.append('descricao', document.getElementById('descricaoStatus').value);
-                    formData.append('cor', document.getElementById('corStatus').value);
-
-                    const url = id ? 
-                        `../controllers/AdminController.class.php?acao=atualizar_status_solicitacao&id=${id}` :
-                        '../controllers/AdminController.class.php?acao=criar_status_solicitacao';
-
-                    fetch(url, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.sucesso) {
-                            alert(data.mensagem);
-                            bootstrap.Modal.getInstance(document.getElementById('modalStatus')).hide();
-                            listarStatus();
-                            carregarStatusSolicitacao(); // Recarregar estatísticas
-                        } else {
-                            alert('Erro: ' + data.mensagem);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erro:', error);
-                        alert('Erro ao processar solicitação');
                     });
                 }
             });
+        }
+
+        // Substitua alert() por Swal.fire() no submit do formEditarUsuario
+        document.addEventListener('submit', function(e) {
+            if (e.target.id === 'formEditarUsuario') {
+                e.preventDefault();
+                const id = document.getElementById('editarUsuarioId').value;
+                const formData = new FormData(e.target);
+
+                fetch(`../controllers/AdminController.class.php?acao=atualizar_usuario&id=${id}`, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sucesso) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sucesso!',
+                            text: data.mensagem,
+                            showConfirmButton: false,
+                            timer: 1800
+                        });
+                        listarUsuarios(paginaAtualUsuarios);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro!',
+                            text: data.mensagem,
+                            confirmButtonColor: '#764ba2'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro!',
+                        text: 'Erro ao processar solicitação',
+                        confirmButtonColor: '#764ba2'
+                    });
+                });
+            }
+
+            // Form submit para tipo de serviço (remover qualquer referência a 'icone')
+            if (e.target.id === 'formTipoServico') {
+                e.preventDefault();
+                const id = document.getElementById('tipoServicoId').value;
+                const formData = new FormData();
+                formData.append('nome', document.getElementById('nomeServico').value);
+                formData.append('categoria', document.getElementById('categoriaServico').value);
+                formData.append('preco_medio', document.getElementById('precoMedioServico').value);
+                formData.append('ativo', document.getElementById('ativoServico').value);
+                formData.append('descricao', document.getElementById('descricaoServico').value);
+
+                // Remover: formData.append('icone', ...);
+
+                const url = id ? 
+                    `../controllers/AdminController.class.php?acao=atualizar_tipo_servico&id=${id}` :
+                    '../controllers/AdminController.class.php?acao=criar_tipo_servico';
+
+                fetch(url, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sucesso) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sucesso!',
+                            text: data.mensagem,
+                            showConfirmButton: false,
+                            timer: 1800
+                        });
+                        bootstrap.Modal.getInstance(document.getElementById('modalTipoServico')).hide();
+                        listarTiposServico();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro!',
+                            text: data.mensagem,
+                            confirmButtonColor: '#764ba2'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro!',
+                        text: 'Erro ao processar solicitação',
+                        confirmButtonColor: '#764ba2'
+                    });
+                });
+            }
+
+            // Form submit para status
+            if (e.target.id === 'formStatus') {
+                e.preventDefault();
+                
+                const id = document.getElementById('statusId').value;
+                const formData = new FormData();
+                formData.append('nome', document.getElementById('nomeStatus').value);
+                formData.append('descricao', document.getElementById('descricaoStatus').value);
+                formData.append('cor', document.getElementById('corStatus').value);
+
+                const url = id ? 
+                    `../controllers/AdminController.class.php?acao=atualizar_status_solicitacao&id=${id}` :
+                    '../controllers/AdminController.class.php?acao=criar_status_solicitacao';
+
+                fetch(url, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sucesso) {
+                        alert(data.mensagem);
+                        bootstrap.Modal.getInstance(document.getElementById('modalStatus')).hide();
+                        listarStatus();
+                        carregarStatusSolicitacao(); // Recarregar estatísticas
+                    } else {
+                        alert('Erro: ' + data.mensagem);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao processar solicitação');
+                });
+            }
         });
 
         // Novas funções para Relatórios
         function carregarRelatorios() {
-            document.getElementById('page-title').textContent = 'Relatórios e Analytics';
+            document.getElementById('page-title').textContent = 'Relatórios ';
             document.getElementById('stats-cards').innerHTML = '';
 
             document.getElementById('content-body').innerHTML = `
@@ -1345,13 +1397,13 @@ if (!isset($_SESSION['admin_id'])) {
                                     <div class="col-md-2">
                                         <label for="relatorioTipo" class="form-label">Tipo de Relatório</label>
                                         <select class="form-select" id="relatorioTipo" name="tipo">
-                                            <option value="geral">📊 Geral</option>
+                                            
                                             <option value="usuarios">👥 Usuários</option>
                                             <option value="solicitacoes">📋 Solicitações</option>
                                             <option value="propostas">💼 Propostas</option>
                                             <option value="avaliacoes">⭐ Avaliações</option>
                                             <option value="financeiro">💰 Financeiro</option>
-                                            <option value="performance">📈 Performance</option>
+                                           
                                         </select>
                                     </div>
                                     <div class="col-md-2">
