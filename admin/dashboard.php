@@ -47,9 +47,43 @@ if (!isset($_SESSION['admin_id'])) {
             min-height: 100vh;
             background-color: #f8f9fa;
         }
+
+        /* Animação de loading para botão de sair */
+        @keyframes spin {
+            0% { transform: rotate(0deg);}
+            100% { transform: rotate(360deg);}
+        }
+        .spin {
+            animation: spin 1s linear infinite;
+        }
     </style>
 </head>
 <body>
+    <!-- Modal de confirmação de logout -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title" id="logoutModalLabel"><i class="bi bi-box-arrow-right"></i> Sair do Sistema</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body text-center">
+            <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
+            <p class="mb-0 fs-5">Tem certeza que deseja <strong>sair do sistema</strong>?</p>
+            <small class="text-muted">Sua sessão será encerrada imediatamente.</small>
+          </div>
+          <div class="modal-footer justify-content-center">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <i class="bi bi-x-circle"></i> Cancelar
+            </button>
+            <button type="button" class="btn btn-danger" id="btnConfirmLogout">
+              <i class="bi bi-box-arrow-right"></i> Sair Agora
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
@@ -531,19 +565,18 @@ if (!isset($_SESSION['admin_id'])) {
             carregarConteudo(currentPage);
         }
 
-        // Logout atualizado
+        // Logout com modal estilizado
         function logout() {
-            if (confirm('Deseja realmente sair do sistema?')) {
-                // Mostrar loading
-                const btnLogout = document.querySelector('[onclick="logout()"]');
-                if (btnLogout) {
-                    btnLogout.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Saindo...';
-                    btnLogout.disabled = true;
-                }
-                
-                // Redirecionar para logout.php
+            const logoutModal = new bootstrap.Modal(document.getElementById('logoutModal'));
+            logoutModal.show();
+
+            // Evitar múltiplos binds
+            const btn = document.getElementById('btnConfirmLogout');
+            btn.onclick = function() {
+                btn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Saindo...';
+                btn.disabled = true;
                 window.location.href = 'logout.php';
-            }
+            };
         }
 
         // Verificar sessão periodicamente (a cada 5 minutos)
@@ -2165,19 +2198,6 @@ if (!isset($_SESSION['admin_id'])) {
             }
         }
 
-    </script>
-</body>
-</html>
-                            alert('Erro: ' + data.mensagem);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erro:', error);
-                        alert('Erro ao processar solicitação');
-                    });
-                }
-            });
-        });
     </script>
 </body>
 </html>
