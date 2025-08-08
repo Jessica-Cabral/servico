@@ -362,5 +362,37 @@ class Proposta {
             return false;
         }
     }
+
+    public function getById($id) {
+        try {
+            $query = "SELECT * FROM tb_proposta WHERE id = :id";
+            
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindValue(':id', $id);
+            $stmt->execute();
+            
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+            
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    public function atualizar($id, $valor, $prazo, $descricao) {
+        try {
+            $query = "UPDATE tb_proposta 
+                      SET valor = :valor, prazo_execucao = :prazo, descricao = :descricao 
+                      WHERE id = :id AND status = 'pendente'";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindValue(':valor', $valor);
+            $stmt->bindValue(':prazo', $prazo);
+            $stmt->bindValue(':descricao', $descricao);
+            $stmt->bindValue(':id', $id);
+            return $stmt->execute();
+        } catch (Exception $e) {
+            error_log("Erro ao atualizar proposta: " . $e->getMessage());
+            return false;
+        }
+    }
 }
 ?>

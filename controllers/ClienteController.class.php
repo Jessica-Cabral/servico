@@ -224,31 +224,20 @@ class ClienteController
     }
 }
 
-if ($_GET['acao'] === 'cadastrar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nome = trim($_POST['nome']);
-    $email = trim($_POST['email']);
-    $senha = $_POST['senha'];
-    $telefone = $_POST['telefone'];
-    $data_nascimento = $_POST['data_nascimento'];
+// Bloco procedural de cadastro de cliente
+if (isset($_GET['acao']) && $_GET['acao'] === 'cadastrar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/../models/Cliente.class.php';
+    $cliente = new Cliente();
+
+    $nome = trim($_POST['nome'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $senha = $_POST['senha'] ?? '';
+    $telefone = $_POST['telefone'] ?? '';
+    $data_nascimento = $_POST['data_nascimento'] ?? '';
+    $cpf = $_POST['cpf'] ?? null;
     $tipos = $_POST['tipo'] ?? [];
     $tipo = in_array('prestador', $tipos) ? 'prestador' : 'cliente';
 
-    $dados = [
-        'nome' => $nome,
-        'email' => $email,
-        'senha' => password_hash($senha, PASSWORD_DEFAULT),
-        'tipo' => $tipo,
-        'telefone' => $telefone,
-        'data_nascimento' => $data_nascimento
-    ];
-    if ($cliente->create($dados)) {
-        header('Location: ../Login.php?cadastro=sucesso');
-        exit();
-    } else {
-        header('Location: ../view/CadPessoa.php?erro=Erro ao cadastrar');
-        exit();
-    }
-}
     $dados = [
         'nome' => $nome,
         'email' => $email,
@@ -265,5 +254,5 @@ if ($_GET['acao'] === 'cadastrar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: ../view/CadPessoa.php?erro=Erro ao cadastrar');
         exit();
     }
-
+}
 ?>

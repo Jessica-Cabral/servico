@@ -309,20 +309,27 @@ $stats_propostas = $proposta->getStatsPropostas($prestador_id);
                                     </button>
                                     
                                     <?php if ($item['status'] == 'pendente'): ?>
-                                        <button class="btn btn-warning btn-sm" onclick="abrirModal('editar', <?php echo $item['id']; ?>)">
-                                            <i class="fas fa-edit me-1"></i>
-                                            Editar
-                                        </button>
-                                        
                                         <button class="btn btn-outline-danger btn-sm" onclick="abrirModal('cancelar', <?php echo $item['id']; ?>)">
                                             <i class="fas fa-times me-1"></i>
                                             Cancelar
                                         </button>
                                     <?php elseif ($item['status'] == 'aceita'): ?>
-                                        <button class="btn btn-success btn-sm" onclick="iniciarTrabalho(<?php echo $item['id']; ?>)">
-                                            <i class="fas fa-play me-1"></i>
-                                            Iniciar Trabalho
-                                        </button>
+                                        <?php
+                                            // Buscar status do serviço para condicionar o botão "Iniciar Trabalho"
+                                            $servicoDetalhes = $servico->getDetalhes($item['solicitacao_id'], $item['cliente_id'] ?? null);
+                                            $statusServicoId = $servicoDetalhes['status_id'] ?? null;
+                                        ?>
+                                        <?php if ($statusServicoId == 3 || $statusServicoId == 4): ?>
+                                            <button class="btn btn-success btn-sm" onclick="iniciarTrabalho(<?php echo $item['id']; ?>)">
+                                                <i class="fas fa-play me-1"></i>
+                                                Iniciar Trabalho
+                                            </button>
+                                        <?php else: ?>
+                                            <button class="btn btn-success btn-sm" disabled data-bs-toggle="tooltip" data-bs-placement="top" title="O serviço ainda não está pronto para iniciar.">
+                                                <i class="fas fa-play me-1"></i>
+                                                Iniciar Trabalho
+                                            </button>
+                                        <?php endif; ?>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -352,6 +359,14 @@ $stats_propostas = $proposta->getStatsPropostas($prestador_id);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // Inicializa tooltips do Bootstrap
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+
         function abrirModal(tipo, id) {
             let url = '';
             let titulo = '';
@@ -373,14 +388,20 @@ $stats_propostas = $proposta->getStatsPropostas($prestador_id);
             document.getElementById('acaoModalLabel').innerText = titulo;
 
             fetch(url)
-                .then(response => response.text())
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => { throw new Error(text || response.statusText); });
+                    }
+                    return response.text();
+                })
                 .then(html => {
                     document.getElementById('acaoModalConteudo').innerHTML = html;
                     new bootstrap.Modal(document.getElementById('acaoModal')).show();
                 })
-                .catch(() => {
-                    document.getElementById('acaoModalConteudo').innerHTML = '<div class="alert alert-danger">Erro ao carregar conteúdo.</div>';
+                .catch((err) => {
+                    document.getElementById('acaoModalConteudo').innerHTML = '<div class="alert alert-danger">Erro ao carregar conteúdo.<br>' + (err.message || '') + '</div>';
                     new bootstrap.Modal(document.getElementById('acaoModal')).show();
+                    console.error('Erro ao carregar conteúdo:', err); // <-- Adicione esta linha para logar o erro no console
                 });
         }
 
@@ -423,3 +444,52 @@ $stats_propostas = $proposta->getStatsPropostas($prestador_id);
     </script>
 </body>
 </html>
+
+<!-- Sugestões de melhoria:
+
+1. Validação e feedback mais claros na edição/cancelamento de propostas
+   - Exibir mensagens de erro/sucesso mais detalhadas na modal.
+   - Validar campos obrigatórios antes de enviar o formulário de edição.
+
+2. Paginação para lista de propostas
+   - Se houver muitas propostas, implemente paginação para evitar carregamento lento.
+
+3. Filtro por período/data
+   - Permitir filtrar propostas por data de envio ou período.
+
+4. Atualização automática (AJAX polling)
+   - Atualizar a lista de propostas automaticamente sem recarregar a página.
+
+5. Histórico de status da proposta
+   - Exibir uma linha do tempo com todas as mudanças de status da proposta.
+
+6. Acessibilidade
+   - Adicionar atributos ARIA e melhorar a navegação por teclado nas modais.
+
+7. Confirmação antes de cancelar
+   - Exibir um modal de confirmação antes de cancelar uma proposta.
+
+8. Exportação de propostas
+   - Permitir exportar a lista de propostas em PDF ou Excel.
+
+9. Notificações em tempo real
+   - Integrar WebSocket ou AJAX para avisar o prestador sobre mudanças de status.
+
+10. Melhorias de segurança
+    - Validar permissões no backend para garantir que só o dono da proposta possa editar/cancelar.
+    - Sanitizar todas as entradas e saídas para evitar XSS/SQL Injection.
+
+11. Melhorias visuais
+    - Adicionar loading spinners nos botões durante requisições.
+    - Exibir ícones diferentes para cada status de proposta.
+
+12. Logs e auditoria
+    - Registrar todas as ações de edição/cancelamento para auditoria.
+
+13. Documentação
+    - Adicionar comentários/documentação no código para facilitar manutenção.
+
+14. Testes automatizados
+    - Criar testes automatizados para os principais fluxos de proposta.
+
+Essas melhorias podem ser implementadas gradualmente, conforme a prioridade do projeto. -->
