@@ -16,6 +16,8 @@ if (!isset($_SESSION['admin_id'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.min.css" rel="stylesheet">
     <style>
         .sidebar {
             height: 100vh;
@@ -170,6 +172,8 @@ if (!isset($_SESSION['admin_id'])) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.all.min.js"></script>
     <script>
         let currentPage = 'dashboard';
 
@@ -335,7 +339,6 @@ if (!isset($_SESSION['admin_id'])) {
         function carregarTiposServico() {
             document.getElementById('page-title').textContent = 'Tipos de Serviço';
             document.getElementById('stats-cards').innerHTML = '';
-            
             document.getElementById('content-body').innerHTML = `
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
@@ -377,13 +380,23 @@ if (!isset($_SESSION['admin_id'])) {
                                         <input type="text" class="form-control" id="nomeServico" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="descricaoServico" class="form-label">Descrição</label>
-                                        <textarea class="form-control" id="descricaoServico" rows="3"></textarea>
+                                        <label for="categoriaServico" class="form-label">Categoria</label>
+                                        <input type="text" class="form-control" id="categoriaServico">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="iconeServico" class="form-label">Ícone (Font Awesome)</label>
-                                        <input type="text" class="form-control" id="iconeServico" placeholder="fa-wrench">
-                                        <small class="text-muted">Ex: fa-wrench, fa-paint-brush, fa-laptop</small>
+                                        <label for="precoMedioServico" class="form-label">Preço Médio</label>
+                                        <input type="number" step="0.01" min="0" class="form-control" id="precoMedioServico">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="ativoServico" class="form-label">Ativo</label>
+                                        <select class="form-select" id="ativoServico">
+                                            <option value="1">Sim</option>
+                                            <option value="0">Não</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="descricaoServico" class="form-label">Descrição</label>
+                                        <textarea class="form-control" id="descricaoServico" rows="3"></textarea>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -459,12 +472,10 @@ if (!isset($_SESSION['admin_id'])) {
         // Renderizar lista de tipos de serviço
         function renderizarTiposServico(tipos) {
             const lista = document.getElementById('tipos-servico-lista');
-            
-            if (tipos.length === 0) {
+            if (!tipos || tipos.length === 0) {
                 lista.innerHTML = '<p class="text-center">Nenhum tipo de serviço encontrado.</p>';
                 return;
             }
-
             let html = `
                 <div class="table-responsive">
                     <table class="table table-striped">
@@ -472,24 +483,26 @@ if (!isset($_SESSION['admin_id'])) {
                             <tr>
                                 <th>ID</th>
                                 <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Preço Médio</th>
+                                <th>Ativo</th>
                                 <th>Descrição</th>
-                                <th>Ícone</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody>
             `;
-
             tipos.forEach(tipo => {
-                const icone = tipo.icone || 'fa-cog';
-                const descricao = tipo.descricao || '-';
-                
                 html += `
                     <tr>
                         <td>${tipo.id}</td>
                         <td>${tipo.nome}</td>
-                        <td>${descricao}</td>
-                        <td><i class="fas ${icone}"></i> ${icone}</td>
+                        <td>${tipo.categoria || '-'}</td>
+                        <td>${tipo.preco_medio !== undefined && tipo.preco_medio !== null ? 'R$ ' + Number(tipo.preco_medio).toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '-'}</td>
+                        <td>
+                            ${tipo.ativo == 1 ? '<span class="badge bg-success">Sim</span>' : '<span class="badge bg-danger">Não</span>'}
+                        </td>
+                        <td>${tipo.descricao || '-'}</td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary" onclick="editarTipoServico(${tipo.id})">
                                 <i class="bi bi-pencil"></i>
@@ -501,7 +514,6 @@ if (!isset($_SESSION['admin_id'])) {
                     </tr>
                 `;
             });
-
             html += '</tbody></table></div>';
             lista.innerHTML = html;
         }
@@ -524,8 +536,10 @@ if (!isset($_SESSION['admin_id'])) {
                         document.getElementById('modalTipoServicoTitle').textContent = 'Editar Tipo de Serviço';
                         document.getElementById('tipoServicoId').value = tipo.id;
                         document.getElementById('nomeServico').value = tipo.nome;
+                        document.getElementById('categoriaServico').value = tipo.categoria || '';
+                        document.getElementById('precoMedioServico').value = tipo.preco_medio !== undefined && tipo.preco_medio !== null ? tipo.preco_medio : '';
+                        document.getElementById('ativoServico').value = tipo.ativo;
                         document.getElementById('descricaoServico').value = tipo.descricao || '';
-                        document.getElementById('iconeServico').value = tipo.icone || '';
                         new bootstrap.Modal(document.getElementById('modalTipoServico')).show();
                     } else {
                         alert('Erro ao carregar tipo de serviço: ' + data.mensagem);
@@ -539,20 +553,42 @@ if (!isset($_SESSION['admin_id'])) {
 
         // Deletar tipo de serviço
         function deletarTipoServico(id) {
-            if (confirm('Tem certeza que deseja deletar este tipo de serviço?')) {
-                fetch(`../controllers/AdminController.class.php?acao=deletar_tipo_servico&id=${id}`, {
-                    method: 'DELETE'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.sucesso) {
-                        alert(data.mensagem);
-                        listarTiposServico();
-                    } else {
-                        alert('Erro: ' + data.mensagem);
-                    }
-                });
-            }
+            Swal.fire({
+                title: 'Tem certeza?',
+                text: "Deseja deletar este tipo de serviço?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sim, deletar!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`../controllers/AdminController.class.php?acao=deletar_tipo_servico&id=${id}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.sucesso) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deletado!',
+                                text: data.mensagem,
+                                showConfirmButton: false,
+                                timer: 1800
+                            });
+                            listarTiposServico();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro!',
+                                text: data.mensagem,
+                                confirmButtonColor: '#764ba2'
+                            });
+                        }
+                    });
+                }
+            });
         }
 
         // Filtrar tipos de serviço
@@ -1190,6 +1226,59 @@ if (!isset($_SESSION['admin_id'])) {
                     });
                 }
 
+                // Form submit para tipo de serviço (remover qualquer referência a 'icone')
+                if (e.target.id === 'formTipoServico') {
+                    e.preventDefault();
+                    const id = document.getElementById('tipoServicoId').value;
+                    const formData = new FormData();
+                    formData.append('nome', document.getElementById('nomeServico').value);
+                    formData.append('categoria', document.getElementById('categoriaServico').value);
+                    formData.append('preco_medio', document.getElementById('precoMedioServico').value);
+                    formData.append('ativo', document.getElementById('ativoServico').value);
+                    formData.append('descricao', document.getElementById('descricaoServico').value);
+
+                    // Remover: formData.append('icone', ...);
+
+                    const url = id ? 
+                        `../controllers/AdminController.class.php?acao=atualizar_tipo_servico&id=${id}` :
+                        '../controllers/AdminController.class.php?acao=criar_tipo_servico';
+
+                    fetch(url, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.sucesso) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sucesso!',
+                                text: data.mensagem,
+                                showConfirmButton: false,
+                                timer: 1800
+                            });
+                            bootstrap.Modal.getInstance(document.getElementById('modalTipoServico')).hide();
+                            listarTiposServico();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro!',
+                                text: data.mensagem,
+                                confirmButtonColor: '#764ba2'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro!',
+                            text: 'Erro ao processar solicitação',
+                            confirmButtonColor: '#764ba2'
+                        });
+                    });
+                }
+
                 // Form submit para status
                 if (e.target.id === 'formStatus') {
                     e.preventDefault();
@@ -1746,7 +1835,7 @@ if (!isset($_SESSION['admin_id'])) {
             switch(tipo) {
                 case 'usuarios':
                     if (dados.crescimento_percentual && dados.crescimento_percentual > 10) {
-                        insights.push('📈 <strong>Crescimento Acelerado:</strong> O crescimento de usuários está 10% acima do normal. Continue investindo em marketing!');
+                        insights.push('📈 <strong>Crescimento Acelerado:</strong> O crescimento de usuários está  10% acima do normal. Continue investindo em marketing!');
                     }
                     if (dados.total_usuarios && dados.usuarios_ativos && (dados.usuarios_ativos / dados.total_usuarios) < 0.7) {
                         insights.push('⚠️ <strong>Baixo Engajamento:</strong> Menos de 70% dos usuários estão ativos. Considere campanhas de reativação.');
@@ -1849,16 +1938,19 @@ if (!isset($_SESSION['admin_id'])) {
         document.addEventListener('DOMContentLoaded', function() {
             carregarDashboard();
 
-            // Form submit para tipo de serviço
+            // Form submit para tipo de serviço (remover qualquer referência a 'icone')
             document.addEventListener('submit', function(e) {
                 if (e.target.id === 'formTipoServico') {
                     e.preventDefault();
-                    
                     const id = document.getElementById('tipoServicoId').value;
                     const formData = new FormData();
                     formData.append('nome', document.getElementById('nomeServico').value);
+                    formData.append('categoria', document.getElementById('categoriaServico').value);
+                    formData.append('preco_medio', document.getElementById('precoMedioServico').value);
+                    formData.append('ativo', document.getElementById('ativoServico').value);
                     formData.append('descricao', document.getElementById('descricaoServico').value);
-                    formData.append('icone', document.getElementById('iconeServico').value);
+
+                    // Remover: formData.append('icone', ...);
 
                     const url = id ? 
                         `../controllers/AdminController.class.php?acao=atualizar_tipo_servico&id=${id}` :
@@ -1871,16 +1963,32 @@ if (!isset($_SESSION['admin_id'])) {
                     .then(response => response.json())
                     .then(data => {
                         if (data.sucesso) {
-                            alert(data.mensagem);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sucesso!',
+                                text: data.mensagem,
+                                showConfirmButton: false,
+                                timer: 1800
+                            });
                             bootstrap.Modal.getInstance(document.getElementById('modalTipoServico')).hide();
                             listarTiposServico();
                         } else {
-                            alert('Erro: ' + data.mensagem);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro!',
+                                text: data.mensagem,
+                                confirmButtonColor: '#764ba2'
+                            });
                         }
                     })
                     .catch(error => {
                         console.error('Erro:', error);
-                        alert('Erro ao processar solicitação');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro!',
+                            text: 'Erro ao processar solicitação',
+                            confirmButtonColor: '#764ba2'
+                        });
                     });
                 }
 

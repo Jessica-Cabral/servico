@@ -60,12 +60,14 @@ class TipoServico {
     }
 
     public function criar($dados) {
-        $sql = "INSERT INTO {$this->table} (nome, descricao, icone) VALUES (:nome, :descricao, :icone)";
+        $sql = "INSERT INTO tb_tipo_servico (nome, descricao, categoria, preco_medio, ativo) VALUES (:nome, :descricao, :categoria, :preco_medio, :ativo)";
         $stmt = $this->conn->prepare($sql);
         
         $stmt->bindParam(':nome', $dados['nome']);
         $stmt->bindParam(':descricao', $dados['descricao']);
-        $stmt->bindParam(':icone', $dados['icone']);
+        $stmt->bindParam(':categoria', $dados['categoria']);
+        $stmt->bindParam(':preco_medio', $dados['preco_medio']);
+        $stmt->bindParam(':ativo', $dados['ativo']);
         
         if ($stmt->execute()) {
             return $this->buscarPorId($this->conn->lastInsertId());
@@ -75,13 +77,15 @@ class TipoServico {
     }
 
     public function atualizar($id, $dados) {
-        $sql = "UPDATE {$this->table} SET nome = :nome, descricao = :descricao, icone = :icone WHERE id = :id";
+        $sql = "UPDATE tb_tipo_servico SET nome = :nome, descricao = :descricao, categoria = :categoria, preco_medio = :preco_medio, ativo = :ativo WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->bindParam(':nome', $dados['nome']);
         $stmt->bindParam(':descricao', $dados['descricao']);
-        $stmt->bindParam(':icone', $dados['icone']);
+        $stmt->bindParam(':categoria', $dados['categoria']);
+        $stmt->bindParam(':preco_medio', $dados['preco_medio']);
+        $stmt->bindParam(':ativo', $dados['ativo']);
         
         if (!$stmt->execute()) {
             throw new Exception("Erro ao atualizar tipo de serviço");

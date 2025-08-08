@@ -58,7 +58,10 @@ class AdminController {
             $dados = [
                 'nome' => $_POST['nome'],
                 'descricao' => $_POST['descricao'] ?? null,
-                'icone' => $_POST['icone'] ?? null
+                // 'icone' => $_POST['icone'] ?? null // Removido pois não existe mais no banco
+                'categoria' => $_POST['categoria'] ?? null,
+                'preco_medio' => $_POST['preco_medio'] ?? null,
+                'ativo' => $_POST['ativo'] ?? 1
             ];
 
             $resultado = $this->tipoServico->criar($dados);
@@ -84,7 +87,10 @@ class AdminController {
             $dados = [
                 'nome' => $_POST['nome'],
                 'descricao' => $_POST['descricao'] ?? null,
-                'icone' => $_POST['icone'] ?? null
+                // 'icone' => $_POST['icone'] ?? null // Removido pois não existe mais no banco
+                'categoria' => $_POST['categoria'] ?? null,
+                'preco_medio' => $_POST['preco_medio'] ?? null,
+                'ativo' => $_POST['ativo'] ?? 1
             ];
 
             $this->tipoServico->atualizar($id, $dados);
