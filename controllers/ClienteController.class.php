@@ -4,6 +4,78 @@
 require_once __DIR__ . '/../models/Cliente.class.php';
 require_once __DIR__ . '/../models/Servico.class.php';
 
+// ADICIONE O BLOCO PROCEDURAL PARA PROCESSAR O CADASTRO
+if (isset($_GET['acao']) && $_GET['acao'] === 'cadastrar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    error_log("POST recebido em ClienteController: " . print_r($_POST, true));
+    
+    // Extrair dados do POST
+    $nome = trim($_POST['nome'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $senha = $_POST['senha'] ?? '';
+    $telefone = $_POST['telefone'] ?? '';
+    $data_nascimento = $_POST['data_nascimento'] ?? '';
+    $cpf = $_POST['cpf'] ?? '';
+    $tipo = $_POST['tipo'] ?? 'cliente';
+
+    // Validação backend
+    function validarCPF($cpf) {
+        $cpf = preg_replace('/[^0-9]/', '', $cpf);
+        if (strlen($cpf) != 11 || preg_match('/(\d)\1{10}/', $cpf)) return false;
+        for ($t = 9; $t < 11; $t++) {
+            for ($d = 0, $c = 0; $c < $t; $c++) $d += $cpf[$c] * (($t + 1) - $c);
+            $d = ((10 * $d) % 11) % 10;
+            if ($cpf[$c] != $d) return false;
+        }
+        return true;
+    }
+    
+    function idadeMinima($data) {
+        $nasc = new DateTime($data);
+        $hoje = new DateTime();
+        $idade = $hoje->diff($nasc)->y;
+        return $idade >= 18;
+    }
+
+    // Validações
+    if (!$nome || !$email || !$senha || !$cpf || !$data_nascimento || !$tipo) {
+        header('Location: ../CadUsuario.php?erro=Preencha todos os campos obrigatórios.');
+        exit();
+    }
+    if (!validarCPF($cpf)) {
+        header('Location: ../CadUsuario.php?erro=CPF inválido.');
+        exit();
+    }
+    if (!idadeMinima($data_nascimento)) {
+        header('Location: ../CadUsuario.php?erro=Você deve ter pelo menos 18 anos.');
+        exit();
+    }
+
+    // Instanciar controller e processar cadastro
+    $controller = new ClienteController();
+    $cliente = new Cliente();
+    
+    // Verificar se já existe email ou cpf cadastrado
+    $jaEmail = $cliente->getByEmail($email);
+    if ($jaEmail) {
+        header('Location: ../CadUsuario.php?erro=E-mail já cadastrado.');
+        exit();
+    }
+    $jaCpf = $cliente->getByCpf($cpf);
+    if ($jaCpf) {
+        header('Location: ../CadUsuario.php?erro=CPF já cadastrado.');
+        exit();
+    }
+
+    // Tentar cadastrar
+    if ($controller->cadastrarCliente($nome, $email, $senha, $telefone, $cpf, $data_nascimento, $tipo)) {
+        header('Location: ../Login.php?cadastro=sucesso');
+        exit();
+    } else {
+        header('Location: ../CadUsuario.php?erro=Erro ao inserir dados no banco.');
+        exit();
+    }
+}
+
 class ClienteController
 {
     private $cliente;
@@ -29,7 +101,7 @@ class ClienteController
         $cliente_nome = $_SESSION['cliente_nome'] ?? 'Cliente';
         $cliente_foto = $_SESSION['cliente_foto'] ?? null;
 
-        $stats = $this->cliente->getStats($cliente_id);
+        $status = $this->cliente->getStatus($cliente_id);
         $servicos_recentes = $this->servico->getRecentes($cliente_id, 4);
         $grafico_dados = $this->servico->getGraficoDados($cliente_id);
         $dados_cliente = $this->cliente->getById($cliente_id);
@@ -164,20 +236,28 @@ class ClienteController
         exit();
     }
 
-    public function cadastrarCliente($nome, $email, $senha)
+    public function cadastrarCliente($nome, $email, $senha, $telefone = '', $cpf = '', $data_nascimento = '', $tipo = 'cliente')
     {
         // Cadastra novo cliente
-        // Aqui você pode adicionar validações extras se desejar
         $cliente = new Cliente();
-        // Adapte conforme o construtor e métodos do seu model
         $dados = [
             'nome' => $nome,
             'email' => $email,
             'senha' => password_hash($senha, PASSWORD_DEFAULT),
-            'tipo' => 'cliente'
+            'tipo' => $tipo,
+            'telefone' => $telefone,
+            'cpf' => $cpf,
+            'data_nascimento' => $data_nascimento
         ];
-        // Implemente um método create no model Cliente se não existir
-        return $cliente->create($dados);
+        error_log("Dados a serem inseridos: " . print_r($dados, true));
+        $result = $cliente->create($dados);
+        if (!$result) {
+            error_log("Erro ao cadastrar cliente (ClienteController): " . print_r($dados, true));
+            // Usar o método público getConnection() ao invés de acessar $conn diretamente
+            $conn = $cliente->getConnection();
+            error_log("Erro PDO: " . print_r($conn->errorInfo(), true));
+        }
+        return $result;
     }
 
     public function avaliarServico($servico_id)
@@ -222,37 +302,28 @@ class ClienteController
         // Inclui a view do formulário
         include __DIR__ . '/../view/cliente/avaliar-servico.php';
     }
+	
+	public function editarCliente($id, $nome, $email, $telefone) {
+        $dados = [
+            'nome' => $nome,
+            'email' => $email,
+            'telefone' => $telefone
+        ];
+        return $this->cliente->atualizar($id, $dados);
+    }
+
+    public function excluirCliente($id) {
+        return $this->cliente->delete($id);
+    }
 }
-
-// Bloco procedural de cadastro de cliente
-if (isset($_GET['acao']) && $_GET['acao'] === 'cadastrar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_once __DIR__ . '/../models/Cliente.class.php';
-    $cliente = new Cliente();
-
-    $nome = trim($_POST['nome'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $senha = $_POST['senha'] ?? '';
-    $telefone = $_POST['telefone'] ?? '';
-    $data_nascimento = $_POST['data_nascimento'] ?? '';
-    $cpf = $_POST['cpf'] ?? null;
-    $tipos = $_POST['tipo'] ?? [];
-    $tipo = in_array('prestador', $tipos) ? 'prestador' : 'cliente';
-
-    $dados = [
-        'nome' => $nome,
-        'email' => $email,
-        'senha' => password_hash($senha, PASSWORD_DEFAULT),
-        'tipo' => $tipo,
-        'cpf' => $cpf,
-        'telefone' => $telefone,
-        'data_nascimento' => $data_nascimento
-    ];
+?>
     if ($cliente->create($dados)) {
         header('Location: ../Login.php?cadastro=sucesso');
         exit();
     } else {
-        header('Location: ../view/CadPessoa.php?erro=Erro ao cadastrar');
+        header('Location: ../CadUsuario.php?erro=Erro ao inserir dados no banco.');
         exit();
     }
 }
+*/
 ?>

@@ -194,6 +194,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Login'])) {
             margin-top: 1rem;
             text-align: center;
         }
+        .login-anhanguera-card .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1.5px solid #c3e6cb;
+            border-radius: 10px;
+            font-weight: 600;
+            margin-top: 1rem;
+            text-align: center;
+        }
         .login-anhanguera-card .divider {
             text-align: center;
             margin: 1.5rem 0 1.2rem 0;
@@ -276,6 +285,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Login'])) {
             </button>
             <?php if ($erro): ?>
                 <div class="alert alert-danger"><?php echo htmlspecialchars($erro); ?></div>
+            <?php endif; ?>
+            <?php if (isset($_GET['cadastro']) && $_GET['cadastro'] === 'sucesso'): ?>
+                <div class="alert alert-success text-center">Cadastro realizado com sucesso! Faça login para continuar.</div>
             <?php endif; ?>
             <div class="divider">ou</div>
             <a href="CadUsuario.php" class="btn btn-outline-secondary">

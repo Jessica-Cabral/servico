@@ -196,14 +196,19 @@ class Prestador {
 
     public function create($dados) {
         try {
-            $sql = "INSERT INTO tb_pessoa (nome, email, senha, tipo) VALUES (:nome, :email, :senha, :tipo)";
+            $sql = "INSERT INTO tb_pessoa (nome, email, senha, tipo, telefone, cpf, data_nascimento) 
+                    VALUES (:nome, :email, :senha, :tipo, :telefone, :cpf, :data_nascimento)";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindValue(':nome', $dados['nome']);
             $stmt->bindValue(':email', $dados['email']);
             $stmt->bindValue(':senha', $dados['senha']);
             $stmt->bindValue(':tipo', $dados['tipo']);
+            $stmt->bindValue(':telefone', $dados['telefone']);
+            $stmt->bindValue(':cpf', $dados['cpf']);
+            $stmt->bindValue(':data_nascimento', $dados['data_nascimento']);
             return $stmt->execute();
         } catch (Exception $e) {
+            error_log("PDO ERRO: " . $e->getMessage());
             return false;
         }
     }
@@ -213,6 +218,18 @@ class Prestador {
             $query = "SELECT * FROM tb_pessoa WHERE email = :email LIMIT 1";
             $stmt = $this->conn->prepare($query);
             $stmt->bindValue(':email', $email);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    public function getByCpf($cpf) {
+        try {
+            $query = "SELECT * FROM tb_pessoa WHERE cpf = :cpf LIMIT 1";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindValue(':cpf', $cpf);
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $e) {

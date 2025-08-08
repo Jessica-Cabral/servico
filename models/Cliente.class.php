@@ -18,10 +18,15 @@ class Cliente
         $this->conn = $database->getConnection();
     }
 
-    public function getStats($cliente_id)
+    // Tornar a propriedade conn pública para acessar errorInfo
+    public function getConnection() {
+        return $this->conn;
+    }
+
+    public function getStatus($cliente_id)
     {
         // Retorna estatísticas dos serviços do cliente
-        $stats = [];
+        $status = [];
 
         try {
             // Serviços ativos (aguardando propostas, em análise, proposta aceita, em andamento)
@@ -30,7 +35,7 @@ class Cliente
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':cliente_id', $cliente_id);
             $stmt->execute();
-            $stats['ativos'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+            $status['ativos'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
             // Serviços concluídos
             $query = "SELECT COUNT(*) as total FROM tb_solicita_servico 
@@ -38,7 +43,7 @@ class Cliente
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':cliente_id', $cliente_id);
             $stmt->execute();
-            $stats['concluidos'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+            $status['concluidos'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
             // Serviços pendentes (aguardando propostas)
             $query = "SELECT COUNT(*) as total FROM tb_solicita_servico 
@@ -46,7 +51,7 @@ class Cliente
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':cliente_id', $cliente_id);
             $stmt->execute();
-            $stats['pendentes'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+            $status['pendentes'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
             // Total gasto (soma dos valores das propostas aceitas)
             $query = "SELECT SUM(p.valor) as total 
@@ -57,10 +62,10 @@ class Cliente
             $stmt->bindParam(':cliente_id', $cliente_id);
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            $stats['total_gasto'] = $result['total'] ?? 0;
+            $status['total_gasto'] = $result['total'] ?? 0;
         } catch (Exception $e) {
             // Em caso de erro, retornar zeros
-            $stats = [
+            $status = [
                 'ativos' => 0,
                 'concluidos' => 0,
                 'pendentes' => 0,
@@ -68,7 +73,7 @@ class Cliente
             ];
         }
 
-        return $stats;
+        return $status;
     }
 
     public function getById($id)
@@ -103,6 +108,18 @@ class Cliente
         try {
             $stmt = $this->conn->prepare("SELECT * FROM tb_pessoa WHERE cpf = ? LIMIT 1");
             $stmt->execute([$cpf]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    public function getByEmail($email)
+    {
+        // Busca dados do cliente por e-mail
+        try {
+            $stmt = $this->conn->prepare("SELECT * FROM tb_pessoa WHERE email = ? LIMIT 1");
+            $stmt->execute([$email]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             return false;
@@ -156,19 +173,32 @@ class Cliente
     {
         // Cria novo cliente
         try {
-            $sql = "INSERT INTO tb_pessoa (nome, email, senha, tipo, telefone, data_nascimento) 
-                    VALUES (:nome, :email, :senha, :tipo, :telefone, :data_nascimento)";
+            $sql = "INSERT INTO tb_pessoa (nome, email, senha, tipo, telefone, cpf, data_nascimento) 
+                    VALUES (:nome, :email, :senha, :tipo, :telefone, :cpf, :data_nascimento)";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindValue(':nome', $dados['nome']);
             $stmt->bindValue(':email', $dados['email']);
             $stmt->bindValue(':senha', $dados['senha']);
             $stmt->bindValue(':tipo', $dados['tipo']);
             $stmt->bindValue(':telefone', $dados['telefone']);
+            $stmt->bindValue(':cpf', $dados['cpf']);
             $stmt->bindValue(':data_nascimento', $dados['data_nascimento']);
             return $stmt->execute();
         } catch (Exception $e) {
+            error_log("PDO ERRO: " . $e->getMessage());
             return false;
         }
-    
-}
+    }
+
+    public function delete($id) {
+        try {
+            $sql = "DELETE FROM tb_pessoa WHERE id = :id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (Exception $e) {
+            error_log("Erro ao deletar cliente: " . $e->getMessage());
+            return false;
+        }
+    }
 }
