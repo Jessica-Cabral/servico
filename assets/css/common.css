@@ -1,0 +1,74 @@
+/* Estilos comuns para todas as páginas */
+
+/* Ajustes de espaçamento para conteúdo principal */
+.main-content {
+    margin-top: 2rem;
+}
+
+/* Variações de espaçamento */
+.main-content-lg {
+    margin-top: 4rem;
+}
+
+.main-content-xl {
+    margin-top: 6rem;
+}
+
+.main-content-sm {
+    margin-top: 1rem;
+}
+
+/* Classe para contêineres específicos de páginas internas */
+.page-container {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+/* Cabeçalho de página interna */
+.page-header {
+    background: linear-gradient(rgba(26, 34, 51, 0.8), rgba(26, 34, 51, 0.8)), url('/servico/assets/img/page-header-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 3rem 0;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 3rem;
+    border-radius: 0 0 10px 10px;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.page-header .breadcrumb {
+    background: transparent;
+    margin-bottom: 0;
+    padding: 0;
+    justify-content: center;
+}
+
+.page-header .breadcrumb-item,
+.page-header .breadcrumb-item a {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.page-header .breadcrumb-item.active {
+    color: #ffb347;
+}
+
+.page-header .breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .page-header {
+        padding: 2rem 0;
+    }
+    
+    .page-header h1 {
+        font-size: 2rem;
+    }
+}

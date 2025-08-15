@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../models/Prestador.class.php';
+require_once __DIR__ . '/../models/PrestadorClass.php';
 
 class RecuperarController {
     public static function enviarCodigo($email) {

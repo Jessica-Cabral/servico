@@ -1,0 +1,81 @@
+
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #27ae60;
+    --success-color: #3498db;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+}
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.stats-card {
+    background: linear-gradient(135deg, var(--secondary-color), #2ecc71);
+    color: white;
+}
+
+.stats-card.primary {
+    background: linear-gradient(135deg, var(--success-color), #5dade2);
+}
+
+.stats-card.warning {
+    background: linear-gradient(135deg, #e67e22, #f39c12);
+}
+
+.stats-card.danger {
+    background: linear-gradient(135deg, var(--danger-color), #c0392b);
+}
+
+.servico-item {
+    border-left: 4px solid var(--secondary-color);
+    transition: all 0.3s;
+}
+
+.servico-item:hover {
+    border-left-color: var(--success-color);
+    background-color: #f8f9fa;
+}
+
+.btn-custom {
+    border-radius: 25px;
+    padding: 10px 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+.opportunity-card {
+    border-left: 4px solid var(--warning-color);
+}
+
+.opportunity-card:hover {
+    border-left-color: var(--secondary-color);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}

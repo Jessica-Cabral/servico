@@ -1,11 +1,17 @@
-DirectoryIndex HomePage.php
+# Define index.php como o arquivo padrão do diretório
+DirectoryIndex index.php
 
+# Ativa o motor de reescrita de URL
 RewriteEngine On
+
+# Define a base do projeto para as regras de reescrita
 RewriteBase /servico/
 
-# Se não for um arquivo ou diretório existente
+# Condição: Se o que foi requisitado NÃO é um arquivo existente
 RewriteCond %{REQUEST_FILENAME} !-f
+# Condição: E se o que foi requisitado NÃO é um diretório existente
 RewriteCond %{REQUEST_FILENAME} !-d
 
-# Redireciona tudo para o index.php
+# Regra: Redireciona qualquer outra requisição para o index.php,
+# passando a URL original como um parâmetro chamado 'url'
 RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]

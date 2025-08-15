@@ -202,4 +202,75 @@
     })
   });
 
+  // Inicializações adicionais seguras
+  document.addEventListener('DOMContentLoaded', function() {
+    // Habilita dropdowns (Bootstrap 5 usa data-bs-toggle)
+    try {
+      var dropdownTriggerList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+      dropdownTriggerList.forEach(function(dd) {
+        // Apenas usa API do Bootstrap se disponível
+        if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+          new bootstrap.Dropdown(dd);
+        }
+      });
+    } catch (e) { console.warn('Dropdown init falhou', e); }
+
+    // Funções globais reutilizáveis para a aplicação
+    window.app = window.app || {};
+
+    // substitui impl. anterior por versão mais robusta
+    window.app.verDetalhes = async function(servicoId) {
+      if (!servicoId) return;
+      try {
+          const url = `/servico/prestador/detalhes-servico?id=${encodeURIComponent(servicoId)}`;
+          const response = await fetch(url, {
+              credentials: 'same-origin',
+              headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          });
+          if (response.redirected) {
+              window.location.href = response.url;
+              return;
+          }
+          if (!response.ok) throw new Error(`Status ${response.status}`);
+          const html = await response.text();
+          const container = document.getElementById('detalhesContent');
+          container.innerHTML = html;
+          const modalEl = document.getElementById('detalhesModal');
+          new bootstrap.Modal(modalEl, { keyboard: true }).show();
+      } catch (err) {
+          console.error('verDetalhes erro:', err);
+          alert('Não foi possível carregar detalhes. Tente novamente.');
+      }
+    };
+
+    window.app.enviarProposta = function(servicoId) {
+      var fld = document.getElementById('servicoId');
+      if (fld) fld.value = servicoId;
+      // injeta csrf automático se faltar (backup)
+      var form = document.getElementById('formEnviarProposta');
+      if (form && !form.querySelector('input[name="csrf_token"]')) {
+        var token = (window.APP && window.APP.csrf) ? window.APP.csrf : '';
+        var inp = document.createElement('input'); inp.type='hidden'; inp.name='csrf_token'; inp.value=token;
+        form.appendChild(inp);
+      }
+      var m = document.getElementById('propostaModal'); if (m && typeof bootstrap !== 'undefined') new bootstrap.Modal(m).show();
+    };
+
+    // Se existir o form de proposta, previne duplo submit e valida CSRF no cliente (com aviso)
+    var formEnviar = document.getElementById('formEnviarProposta');
+    if (formEnviar) {
+      formEnviar.addEventListener('submit', function(e){
+        var token = formEnviar.querySelector('input[name="csrf_token"]');
+        if (!token || !token.value) {
+          e.preventDefault();
+          alert('Token CSRF ausente. Atualize a página e tente novamente.');
+          return false;
+        }
+        // desativa submit button para evitar duplicação
+        var btn = formEnviar.querySelector('button[type="submit"]');
+        if (btn) btn.disabled = true;
+      });
+    }
+  });
+
 })()
